@@ -87,6 +87,7 @@ const U64 AB_FILE = A_FILE|B_FILE;
 //PAT for various pieces are as follows:
 U64 pawn_attacks[2][64];
 U64 knight_attacks[64]; //knights have side independent movement
+U64 king_attacks[64];
 
 //function to generate pawn attacks
 U64 mask_pawn_attacks(int side, int square)
@@ -130,6 +131,23 @@ U64 mask_knight_attacks(int square)
     return attacks;
 }
 
+//function to generate king attacks
+U64 mask_king_attacks(int square)
+{
+    U64 bitboard = 0ULL;
+    U64 attacks = 0ULL;
+    set_bit(bitboard, square);
+    attacks = ((bitboard>>1)&~H_FILE); 
+    attacks |= ((bitboard>>7)&~A_FILE);
+    attacks |= ((bitboard>>8));
+    attacks |= ((bitboard>>9)&~H_FILE);
+    attacks |= ((bitboard<<1)&(~A_FILE));
+    attacks |= ((bitboard<<7)&~H_FILE);
+    attacks |= ((bitboard<<8));
+    attacks |= ((bitboard<<9)&~A_FILE);
+    return attacks;
+}
+
 //functions to generate attacks for all position for all pieces (PATS)
 //for leaper pieces: (leaper attacks are not affected by blocking pieces, hence leaper and sliding pieces tables have to be generated separately)
 void init_leapers_attacks()
@@ -139,6 +157,7 @@ void init_leapers_attacks()
         pawn_attacks[white][square] = mask_pawn_attacks(white, square);
         pawn_attacks[black][square] = mask_pawn_attacks(black, square);
         knight_attacks[square] = mask_knight_attacks(square);
+        king_attacks[square]=mask_king_attacks(square);
     }
 }
 
@@ -152,5 +171,9 @@ int main(int argc, char const *argv[])
 {
     cout<<"Welcome to Domino, never lose again!\n";
     init_leapers_attacks();
+    for (int i=0;i<64;i++)
+    {
+        print_bitboard(king_attacks[i]);
+    }
     return 0;
 }
