@@ -86,7 +86,7 @@ const U64 AB_FILE = A_FILE|B_FILE;
 //PAT format: table[side][square]
 //PAT for various pieces are as follows:
 U64 pawn_attacks[2][64];
-U64 knight_attacks[2][64];
+U64 knight_attacks[64]; //knights have side independent movement
 
 //function to generate pawn attacks
 U64 mask_pawn_attacks(int side, int square)
@@ -101,32 +101,32 @@ U64 mask_pawn_attacks(int side, int square)
     {
         //we need to be careful about out of bounds, 
         //we will use ~FILE_A (not file A/H), so that we can exclude pawns on these files while considering side ways capture
-        attacks|= ((bitboard>>7)&(~A_FILE)); 
+        attacks|= ((bitboard>>7)&(~A_FILE)); //right side capture cannot come on a file
         attacks|= ((bitboard>>9)&(~H_FILE));
     }
     else
     {
-        attacks|= ((bitboard<<7)&(~H_FILE)); //right sideways not possible on h file
+        attacks|= ((bitboard<<7)&(~H_FILE)); 
         attacks|= ((bitboard<<9)&(~A_FILE));
     }
     return attacks;
 }
 
 //function to generate knight attacks
-U64 mask_knight_attacks(int side, int square)
+U64 mask_knight_attacks(int square)
 {
     U64 bitboard = 0ULL;
     U64 attacks = 0ULL;
     set_bit(bitboard, square);
     //knights are side independent
-    if (side==0) //white to move
-    {
-
-    }
-    else
-    {
-
-    }
+    attacks = ((bitboard>>6)&~AB_FILE); //right side 2 steps cannot come on AB, can come on C to H
+    attacks |= ((bitboard>>10)&~GH_FILE);
+    attacks |= ((bitboard>>15)&~A_FILE);
+    attacks |= ((bitboard>>17)&~H_FILE);
+    attacks |= ((bitboard<<6)&(~GH_FILE));
+    attacks |= ((bitboard<<10)&~AB_FILE);
+    attacks |= ((bitboard<<15)&~H_FILE);
+    attacks |= ((bitboard<<17)&~A_FILE);
     return attacks;
 }
 
@@ -138,6 +138,7 @@ void init_leapers_attacks()
     {
         pawn_attacks[white][square] = mask_pawn_attacks(white, square);
         pawn_attacks[black][square] = mask_pawn_attacks(black, square);
+        knight_attacks[square] = mask_knight_attacks(square);
     }
 }
 
@@ -151,9 +152,5 @@ int main(int argc, char const *argv[])
 {
     cout<<"Welcome to Domino, never lose again!\n";
     init_leapers_attacks();
-    for (int square = 0; square<64; square++)
-    {
-        print_bitboard(pawn_attacks[black][square]);
-    }
     return 0;
 }
