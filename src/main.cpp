@@ -4,7 +4,7 @@ Including system files
 
 #############################*/
 
-#include<bits/stdc++.h>
+#include<iostream>
 using namespace std;
 
 //define bitboard datatype
@@ -21,6 +21,9 @@ enum {
     a2, b2, c2, d2, e2, f2, g2, h2,
     a1, b1, c1, d1, e1, f1, g1, h1,
 };
+
+//enum sides to move
+enum {white, black}; //0 means white
 
 //preserved for future use
 
@@ -66,6 +69,77 @@ void print_bitboard(U64 bitboard)
     //print bitboard as unsigned decimal number
     cout<<"Bitboard: "<<bitboard<<"\n";
 }
+/*##########################
+
+Precalculated Attack Tables (PAT)
+
+#############################*/
+
+//file constants
+const U64 A_FILE = 0x0101010101010101;
+const U64 H_FILE = 0x8080808080808080;
+const U64 B_FILE = 0x0202020202020202;
+const U64 G_FILE = 0x4040404040404040;
+const U64 GH_FILE = H_FILE|G_FILE;
+const U64 AB_FILE = A_FILE|B_FILE;
+
+//PAT format: table[side][square]
+//PAT for various pieces are as follows:
+U64 pawn_attacks[2][64];
+U64 knight_attacks[2][64];
+
+//function to generate pawn attacks
+U64 mask_pawn_attacks(int side, int square)
+{
+    //create piece bitboard
+    U64 bitboard = 0ULL;
+    // bitboard to store results
+    U64 attacks = 0ULL;
+    //place piece on the board
+    set_bit(bitboard, square);
+    if (side==0) //white to move
+    {
+        //we need to be careful about out of bounds, 
+        //we will use ~FILE_A (not file A/H), so that we can exclude pawns on these files while considering side ways capture
+        attacks|= ((bitboard>>7)&(~A_FILE)); 
+        attacks|= ((bitboard>>9)&(~H_FILE));
+    }
+    else
+    {
+        attacks|= ((bitboard<<7)&(~H_FILE)); //right sideways not possible on h file
+        attacks|= ((bitboard<<9)&(~A_FILE));
+    }
+    return attacks;
+}
+
+//function to generate knight attacks
+U64 mask_knight_attacks(int side, int square)
+{
+    U64 bitboard = 0ULL;
+    U64 attacks = 0ULL;
+    set_bit(bitboard, square);
+    //knights are side independent
+    if (side==0) //white to move
+    {
+
+    }
+    else
+    {
+
+    }
+    return attacks;
+}
+
+//functions to generate attacks for all position for all pieces (PATS)
+//for leaper pieces: (leaper attacks are not affected by blocking pieces, hence leaper and sliding pieces tables have to be generated separately)
+void init_leapers_attacks()
+{
+    for (int square = 0; square<64; square++)
+    {
+        pawn_attacks[white][square] = mask_pawn_attacks(white, square);
+        pawn_attacks[black][square] = mask_pawn_attacks(black, square);
+    }
+}
 
 /*##########################
 
@@ -76,13 +150,10 @@ Main driver
 int main(int argc, char const *argv[])
 {
     cout<<"Welcome to Domino, never lose again!\n";
-    U64 bitboard = 0ULL;
-    //setting a square to test enum
-    set_bit(bitboard, e4);
-    set_bit(bitboard, f2);
-    print_bitboard(bitboard);
-    reset_bit(bitboard, e4);
-    reset_bit(bitboard, e4);
-    print_bitboard(bitboard);
+    init_leapers_attacks();
+    for (int square = 0; square<64; square++)
+    {
+        print_bitboard(pawn_attacks[black][square]);
+    }
     return 0;
 }
