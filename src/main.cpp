@@ -55,7 +55,7 @@ void print_bitboard(U64 bitboard)
         cout<<" "<<(8 - rank)<<"  ";
         for (int file = 0; file<8; file++)
         {
-            // file 8 is top most, chess board like normal 
+            // rank 8 is top most, chess board like normal 
             // counting from top left
             int square = 8*rank + file;
             cout<<get_bit(bitboard, square)<<" ";
@@ -67,7 +67,7 @@ void print_bitboard(U64 bitboard)
         cout<<file<<" ";
     cout<<"\n\n";
     //print bitboard as unsigned decimal number
-    cout<<"Bitboard: "<<bitboard<<"\n";
+    //cout<<"Bitboard: "<<bitboard<<"\n";
 }
 /*##########################
 
@@ -148,6 +148,48 @@ U64 mask_king_attacks(int square)
     return attacks;
 }
 
+//function to generate bishop relevant occupancy bits
+U64 mask_bishop_attacks(int square)
+{
+    U64 attacks = 0ULL; //more accurately the relevant occupancy squares 
+    // rank and file variables
+    int rank,file; //board rank = 8 - rank
+    //target rank and file variables
+    int tar_rank = square/8; int tar_file = square %8;
+    //mask relevant bishop occupancy bits
+    //edges is not taken while masking relevant occupany bits, so we dont need to go to rank 7 file 7 or rank 0 file 0
+    for (rank = tar_rank+1, file = tar_file+1; rank<=6&&file<=6;file++,rank++) 
+        attacks|= (1ULL<<(rank*8+file)); //board rank = 8 - rank variable, so this for loop creates the bottom right diagonal
+    for (rank = tar_rank+1, file = tar_file-1; rank<=6&&file>=1;file--,rank++) 
+        attacks|= (1ULL<<(rank*8+file)); //bottom left diagonal
+    for (rank = tar_rank-1, file = tar_file+1; rank>=1&&file<=6;file++,rank--) 
+        attacks|= (1ULL<<(rank*8+file)); //top right diagonal
+    for (rank = tar_rank-1, file = tar_file-1; rank>=1&&file>=1;file--,rank--) 
+        attacks|= (1ULL<<(rank*8+file)); //top left diagonal
+    return attacks;
+}
+
+//function to generate rook relevant occupany bits
+U64 mask_rook_attacks(int square)
+{
+    U64 attacks = 0ULL; //more accurately the relevant occupancy squares 
+    // rank and file variables
+    int rank,file; //board rank = 8 - rank
+    //target rank and file variables
+    int tar_rank = square/8; int tar_file = square %8;
+    //mask relevant bishop occupancy bits
+    //edges is not taken while masking relevant occupany bits, so we dont need to go to rank 7 file 7 or rank 0 file 0
+    for (rank = tar_rank+1, file = tar_file; rank<=6;rank++) 
+        attacks|= (1ULL<<(rank*8+file)); //board rank = 8 - rank variable, so this for loop creates the down part
+    for (rank = tar_rank-1, file = tar_file; rank>=1;rank--) 
+        attacks|= (1ULL<<(rank*8+file)); //top part
+    for (rank = tar_rank, file = tar_file+1; file<=6;file++) 
+        attacks|= (1ULL<<(rank*8+file)); //right part
+    for (rank = tar_rank, file = tar_file-1; file>=1;file--) 
+        attacks|= (1ULL<<(rank*8+file)); //left part
+    return attacks;
+}
+
 //functions to generate attacks for all position for all pieces (PATS)
 //for leaper pieces: (leaper attacks are not affected by blocking pieces, hence leaper and sliding pieces tables have to be generated separately)
 void init_leapers_attacks()
@@ -172,8 +214,6 @@ int main(int argc, char const *argv[])
     cout<<"Welcome to Domino, never lose again!\n";
     init_leapers_attacks();
     for (int i=0;i<64;i++)
-    {
-        print_bitboard(king_attacks[i]);
-    }
+        print_bitboard(mask_rook_attacks(i));
     return 0;
 }
