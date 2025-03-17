@@ -47,6 +47,17 @@ Bit manipulation functions and macros
 //if we reset using xor, calling reset multiple times can set the bit accidently, so we need an if condition along with it
 #define reset_bit(bitboard, square) {if (get_bit(bitboard, square)) {bitboard^= (1ULL<<square);}}
 
+//count bits
+//declared static inline since we will use it often
+//inline suggests(not manadates) the compiler to replace function call with actual code, reduces overhead
+//static limits scope of function to this file only
+static inline int bit_count(U64 bitboard)
+{
+    int bitcnt = 0; 
+    while(bitboard) {bitcnt++; bitboard &=(bitboard-1);} //reset LSB
+    return bitcnt;
+}
+
 //print bitboard function
 void print_bitboard(U64 bitboard)
 {
@@ -276,15 +287,17 @@ Main driver
 
 int main(int argc, char const *argv[])
 {
+    ios::sync_with_stdio(false); //turn off sync with C's stdout
+    cin.tie(nullptr); //stops flushing cout buffer before every cin operation 
     cout<<"Welcome to Domino, never lose again!\n";
     init_leapers_attacks();
     // blocker botboard for testing
     U64 blocker = 0ULL;
-    set_bit(blocker, d7);
+    set_bit(blocker, e7);
     set_bit(blocker, d2);
-    set_bit(blocker, b4);
+    set_bit(blocker, a4);
     set_bit(blocker, g4);
     print_bitboard(blocker);
-    print_bitboard(generate_rook_attack_sets(d4, blocker));
+    cout<<bit_count(blocker)<<"\n";
     return 0;
 }
