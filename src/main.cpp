@@ -22,19 +22,18 @@ enum {
     a1, b1, c1, d1, e1, f1, g1, h1,
 };
 
+const string square_to_board[] = {
+    "a8", "b8", "c8", "d8", "e8", "f8", "g8", "h8",
+    "a7", "b7", "c7", "d7", "e7", "f7", "g7", "h7",
+    "a6", "b6", "c6", "d6", "e6", "f6", "g6", "h6",
+    "a5", "b5", "c5", "d5", "e5", "f5", "g5", "h5",
+    "a4", "b4", "c4", "d4", "e4", "f4", "g4", "h4",
+    "a3", "b3", "c3", "d3", "e3", "f3", "g3", "h3",
+    "a2", "b2", "c2", "d2", "e2", "f2", "g2", "h2",
+    "a1", "b1", "c1", "d1", "e1", "f1", "g1", "h1"};
+
 //enum sides to move
 enum {white, black}; //0 means white
-
-//preserved for future use
-
-// "a8", "b8", "c8", "d8", "e8", "f8", "g8", "h8",
-// "a7", "b7", "c7", "d7", "e7", "f7", "g7", "h7",
-// "a6", "b6", "c6", "d6", "e6", "f6", "g6", "h6",
-// "a5", "b5", "c5", "d5", "e5", "f5", "g5", "h5",
-// "a4", "b4", "c4", "d4", "e4", "f4", "g4", "h4",
-// "a3", "b3", "c3", "d3", "e3", "f3", "g3", "h3",
-// "a2", "b2", "c2", "d2", "e2", "f2", "g2", "h2",
-// "a1", "b1", "c1", "d1", "e1", "f1", "g1", "h1",
 
 /*##########################
 
@@ -47,15 +46,22 @@ Bit manipulation functions and macros
 //if we reset using xor, calling reset multiple times can set the bit accidently, so we need an if condition along with it
 #define reset_bit(bitboard, square) {if (get_bit(bitboard, square)) {bitboard^= (1ULL<<square);}}
 
-//count bits
+//count bits function
 //declared static inline since we will use it often
 //inline suggests(not manadates) the compiler to replace function call with actual code, reduces overhead
 //static limits scope of function to this file only
 static inline int bit_count(U64 bitboard)
 {
     int bitcnt = 0; 
-    while(bitboard) {bitcnt++; bitboard &=(bitboard-1);} //reset LSB
+    while(bitboard) {bitcnt++; bitboard &=(bitboard-1);} //reset FSB (first set bit)
     return bitcnt;
+}
+
+//get FSB function
+static inline int get_fsb(U64 bitboard)
+{
+    if (!bitboard) return -1;
+    return bit_count((bitboard&-bitboard)-1);
 }
 
 //print bitboard function
@@ -293,11 +299,11 @@ int main(int argc, char const *argv[])
     init_leapers_attacks();
     // blocker botboard for testing
     U64 blocker = 0ULL;
-    set_bit(blocker, e7);
+    set_bit(blocker, d7);
     set_bit(blocker, d2);
     set_bit(blocker, a4);
     set_bit(blocker, g4);
     print_bitboard(blocker);
-    cout<<bit_count(blocker)<<"\n";
+    cout<<square_to_board[get_fsb(blocker)]<<"\n";
     return 0;
 }
