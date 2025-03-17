@@ -157,7 +157,7 @@ U64 mask_bishop_attacks(int square)
     //target rank and file variables
     int tar_rank = square/8; int tar_file = square %8;
     //mask relevant bishop occupancy bits
-    //edges is not taken while masking relevant occupany bits, so we dont need to go to rank 7 file 7 or rank 0 file 0
+    //edges are not taken while masking relevant occupany bits, so we dont need to go to rank 7 file 7 or rank 0 file 0
     for (rank = tar_rank+1, file = tar_file+1; rank<=6&&file<=6;file++,rank++) 
         attacks|= (1ULL<<(rank*8+file)); //board rank = 8 - rank variable, so this for loop creates the bottom right diagonal
     for (rank = tar_rank+1, file = tar_file-1; rank<=6&&file>=1;file--,rank++) 
@@ -169,6 +169,38 @@ U64 mask_bishop_attacks(int square)
     return attacks;
 }
 
+//function to generate bishop attack sets, given blocker
+//we will go till edge this time as we can attack the blocker on edge as well, and here we are generating attacks, not relevant occupancy bits
+U64 generate_bishop_attack_sets(int square, U64 blocker)
+{
+    U64 attacks = 0ULL; //distinct attack sets
+    // rank and file variables
+    int rank,file; //board rank = 8 - rank
+    //target rank and file variables
+    int tar_rank = square/8; int tar_file = square %8;
+    for (rank = tar_rank+1, file = tar_file+1; rank<=7&&file<=7;file++,rank++) 
+    {
+        attacks|= (1ULL<<(rank*8+file));
+        if (get_bit(blocker, rank*8+file)) break; // if there was a blocker at this square, the piece cannot attack further
+    } //board rank = 8 - rank variable, so this for loop creates the bottom right diagonal
+    for (rank = tar_rank+1, file = tar_file-1; rank<=7&&file>=0;file--,rank++) 
+    {
+        attacks|= (1ULL<<(rank*8+file));
+        if (get_bit(blocker, rank*8+file)) break;
+    } //bottom left diagonal
+    for (rank = tar_rank-1, file = tar_file+1; rank>=0&&file<=7;file++,rank--) 
+    {
+        attacks|= (1ULL<<(rank*8+file));
+        if (get_bit(blocker, rank*8+file)) break;
+    } //top right diagonal
+    for (rank = tar_rank-1, file = tar_file-1; rank>=0&&file>=0;file--,rank--) 
+    {
+        attacks|= (1ULL<<(rank*8+file));
+        if (get_bit(blocker, rank*8+file)) break;
+    } //top left diagonal
+    return attacks;
+}
+
 //function to generate rook relevant occupany bits
 U64 mask_rook_attacks(int square)
 {
@@ -177,8 +209,8 @@ U64 mask_rook_attacks(int square)
     int rank,file; //board rank = 8 - rank
     //target rank and file variables
     int tar_rank = square/8; int tar_file = square %8;
-    //mask relevant bishop occupancy bits
-    //edges is not taken while masking relevant occupany bits, so we dont need to go to rank 7 file 7 or rank 0 file 0
+    //mask relevant rook occupancy bits
+    //edges are not taken while masking relevant occupany bits, so we dont need to go to rank 7 file 7 or rank 0 file 0
     for (rank = tar_rank+1, file = tar_file; rank<=6;rank++) 
         attacks|= (1ULL<<(rank*8+file)); //board rank = 8 - rank variable, so this for loop creates the down part
     for (rank = tar_rank-1, file = tar_file; rank>=1;rank--) 
@@ -187,6 +219,39 @@ U64 mask_rook_attacks(int square)
         attacks|= (1ULL<<(rank*8+file)); //right part
     for (rank = tar_rank, file = tar_file-1; file>=1;file--) 
         attacks|= (1ULL<<(rank*8+file)); //left part
+    return attacks;
+}
+
+//function to generate rook attack sets, given blocker
+//we will go till edge this time as we can attack the blocker on edge as well, and here we are generating attacks, not relevant occupancy bits
+U64 generate_rook_attack_sets(int square, U64 blocker)
+{
+    U64 attacks = 0ULL; //distinct attack sets
+    // rank and file variables
+    int rank,file; //board rank = 8 - rank
+    //target rank and file variables
+    int tar_rank = square/8; int tar_file = square %8;
+    for (rank = tar_rank+1, file = tar_file; rank<=7;rank++) 
+    {
+        attacks|= (1ULL<<(rank*8+file));
+        if (get_bit(blocker, rank*8+file)) break;
+    } //board rank = 8 - rank variable, so this for loop creates the down part
+    for (rank = tar_rank-1, file = tar_file; rank>=0;rank--) 
+    {
+        attacks|= (1ULL<<(rank*8+file));
+        if (get_bit(blocker, rank*8+file)) break;
+    } //top part
+    for (rank = tar_rank, file = tar_file+1; file<=7;file++) 
+    {
+        attacks|= (1ULL<<(rank*8+file));
+        if (get_bit(blocker, rank*8+file)) break;
+    } //right part
+    for (rank = tar_rank, file = tar_file-1; file>=0;file--) 
+    {
+        attacks|= (1ULL<<(rank*8+file));
+        if (get_bit(blocker, rank*8+file)) break;
+    }
+     //left part
     return attacks;
 }
 
@@ -213,7 +278,13 @@ int main(int argc, char const *argv[])
 {
     cout<<"Welcome to Domino, never lose again!\n";
     init_leapers_attacks();
-    for (int i=0;i<64;i++)
-        print_bitboard(mask_rook_attacks(i));
+    // blocker botboard for testing
+    U64 blocker = 0ULL;
+    set_bit(blocker, d7);
+    set_bit(blocker, d2);
+    set_bit(blocker, b4);
+    set_bit(blocker, g4);
+    print_bitboard(blocker);
+    print_bitboard(generate_rook_attack_sets(d4, blocker));
     return 0;
 }
