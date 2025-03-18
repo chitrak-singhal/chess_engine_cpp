@@ -1,3 +1,5 @@
 .vscode
 src/main.exe
 src/tempCodeRunnerFile.cpp
+src/*.exe
+src/*.o
