@@ -41,16 +41,14 @@ int main()
 {
     ios::sync_with_stdio(false); //turn off sync with C's stdout
     cin.tie(nullptr); //stops flushing cout buffer before every cin operation 
+    cout<<"####################################\n";
     cout<<"Welcome to Domino, never lose again!\n";
+    cout<<"####################################\n";
     init_leapers_attacks();
-    print_bitboard(king_attacks[d5]);
     // blocker botboard for testing
-    U64 blocker = 0ULL;
-    set_bit(blocker, d7);
-    set_bit(blocker, d2);
-    set_bit(blocker, a4);
-    set_bit(blocker, g4);
-    print_bitboard(blocker);
-    cout<<square_to_board[get_fsb(blocker)]<<"\n";
+    U64 relevant_occupancy_mask = generate_relevant_occupancy_mask_rook(a1);
+    for (int i=0;i<(1<<bit_count(relevant_occupancy_mask));i++)
+    {U64 blocker = generate_blocker_bitboard(i,relevant_occupancy_mask);
+    print_bitboard(blocker);}
     return 0;
 }

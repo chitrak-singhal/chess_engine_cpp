@@ -71,8 +71,8 @@ U64 mask_king_attacks(int square)
     return attacks;
 }
 
-//function to generate bishop relevant occupancy bits
-U64 mask_bishop_attacks(int square)
+//function to generate bishop relevant occupancy mask
+U64 generate_relevant_occupancy_mask_bishop(int square)
 {
     U64 attacks = 0ULL; //more accurately the relevant occupancy squares 
     // rank and file variables
@@ -125,7 +125,7 @@ U64 generate_bishop_attack_sets(int square, U64 blocker)
 }
 
 //function to generate rook relevant occupany bits
-U64 mask_rook_attacks(int square)
+U64 generate_relevant_occupancy_mask_rook(int square)
 {
     U64 attacks = 0ULL; //more accurately the relevant occupancy squares 
     // rank and file variables
@@ -145,7 +145,7 @@ U64 mask_rook_attacks(int square)
     return attacks;
 }
 
-//function to generate rook attack sets, given blocker
+//function to generate rook attack sets, given blocker bitboard
 //we will go till edge this time as we can attack the blocker on edge as well, and here we are generating attacks, not relevant occupancy bits
 U64 generate_rook_attack_sets(int square, U64 blocker)
 {
@@ -176,6 +176,21 @@ U64 generate_rook_attack_sets(int square, U64 blocker)
     }
      //left part
     return attacks;
+}
+
+//function to generate blocker bitboard given blocker bitboard index and relevant occupancy mask
+U64 generate_blocker_bitboard(int blocker_bitboard_index, U64 relevant_occupancy_mask)
+{
+    U64 blocker = 0ULL; //blocker bitboard
+    int num_of_relevant_occu = bit_count(relevant_occupancy_mask); //number of relevant occupancies in the mask
+    for (int relevant_occu=0; relevant_occu<num_of_relevant_occu; relevant_occu++) //iterate over the relevant occupancies
+    {
+        int square = get_fsb(relevant_occupancy_mask); //get the relevant occupancy square
+        reset_bit(relevant_occupancy_mask, square); //reset it, so that we can get the next relevant occupancy square
+        if ((blocker_bitboard_index>>relevant_occu)&1) //check if there is a blocker at that relevant occupancy square
+            set_bit(blocker, square);
+    }
+    return blocker;
 }
 
 //functions to generate attacks for all position for all pieces (PATS)

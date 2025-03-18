@@ -8,6 +8,7 @@ Including system files
 #############################*/
 
 #include<iostream>
+#include <array>
 using namespace std;
 
 //including bit manipulation functions
@@ -15,6 +16,14 @@ using namespace std;
 
 //bitboard datatype already defined in BitManipulation.hpp
 //#define U64 unsigned long long
+
+//file constants //using const instead of constexpr avoids multiple copies in different cpp files, constexpr variables must be evaluated at compile time
+constexpr U64 A_FILE = 0x0101010101010101;
+constexpr U64 H_FILE = 0x8080808080808080;
+constexpr U64 B_FILE = 0x0202020202020202;
+constexpr U64 G_FILE = 0x4040404040404040;
+constexpr U64 GH_FILE = H_FILE|G_FILE;
+constexpr U64 AB_FILE = A_FILE|B_FILE;
 
 //enum board square
 enum {
@@ -29,7 +38,12 @@ enum {
 };
 
 //covert square number to board square
-const string square_to_board[] = {
+//using const would lead to mulitple copies
+//but cannot use constexpr with string since string is not a literal type
+//literal types can be ompletely evaluated at compile time
+// array of literal types is literal type
+// so we use constexpr array<const char*, 64> which is a compile-time constant
+constexpr std::array<const char*, 64> square_to_board = {
     "a8", "b8", "c8", "d8", "e8", "f8", "g8", "h8",
     "a7", "b7", "c7", "d7", "e7", "f7", "g7", "h7",
     "a6", "b6", "c6", "d6", "e6", "f6", "g6", "h6",
@@ -41,13 +55,5 @@ const string square_to_board[] = {
 
 //enum sides to move
 enum {white, black}; //0 means white
-
-//file constants
-const U64 A_FILE = 0x0101010101010101;
-const U64 H_FILE = 0x8080808080808080;
-const U64 B_FILE = 0x0202020202020202;
-const U64 G_FILE = 0x4040404040404040;
-const U64 GH_FILE = H_FILE|G_FILE;
-const U64 AB_FILE = A_FILE|B_FILE;
 
 #endif
