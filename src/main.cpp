@@ -45,10 +45,6 @@ int main()
     cout<<"Welcome to Domino, never lose again!\n";
     cout<<"####################################\n";
     init_leapers_attacks();
-    // blocker botboard for testing
-    U64 relevant_occupancy_mask = generate_relevant_occupancy_mask_rook(a1);
-    for (int i=0;i<(1<<bit_count(relevant_occupancy_mask));i++)
-    {U64 blocker = generate_blocker_bitboard(i,relevant_occupancy_mask);
-    print_bitboard(blocker);}
+
     return 0;
 }
