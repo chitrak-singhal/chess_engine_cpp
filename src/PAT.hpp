@@ -47,6 +47,8 @@ void init_leapers_attacks();
 
 //random number generator
 extern unsigned int state;
-unsigned int random_generator();
-
+unsigned int random_generator_U32();
+U64 random_generator_U64(); //this random number will be used to generate the magic number candidates
+//generate magic number candidate
+U64 generate_magic_number_candidate();
 #endif

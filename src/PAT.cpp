@@ -208,7 +208,7 @@ void init_leapers_attacks()
 
 //random number generator
 unsigned int state = 1804289383;
-unsigned int random_generator()
+unsigned int random_generator_U32()
 {
     unsigned int num = state;
     //xorshift32 algorithm
@@ -219,4 +219,20 @@ unsigned int random_generator()
     state = num; //update state
 
     return num;
+}
+U64 random_generator_U64() //this random number will be used to generate the magic number candidates
+{
+    //define 4 random numbers low non-zero bits numbers
+    U64 num1 = ((U64)random_generator_U32() & 0xFFFF); //& with 0xFFFF keeps only first 16 bits
+    U64 num2 = ((U64)random_generator_U32() & 0xFFFF);
+    U64 num3 = ((U64)random_generator_U32() & 0xFFFF);
+    U64 num4 = ((U64)random_generator_U32() & 0xFFFF);
+
+    return ((num1)| (num2<<16)|(num3<<32)|(num4<<48));
+}
+
+//generate magic number candidate
+U64 generate_magic_number_candidate()
+{
+    return (random_generator_U64()&random_generator_U64()&random_generator_U64());
 }
