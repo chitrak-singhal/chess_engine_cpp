@@ -45,4 +45,8 @@ U64 generate_blocker_bitboard(int blocker_bitboard_index, U64 relevant_occupancy
 //for leaper pieces: (leaper attacks are not affected by blocking pieces, hence leaper and sliding pieces tables have to be generated separately)
 void init_leapers_attacks();
 
+//random number generator
+extern unsigned int state;
+unsigned int random_generator();
+
 #endif

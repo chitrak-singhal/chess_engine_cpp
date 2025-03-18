@@ -45,6 +45,9 @@ int main()
     cout<<"Welcome to Domino, never lose again!\n";
     cout<<"####################################\n";
     init_leapers_attacks();
-
+    cout<<random_generator()<<"\n";
+    cout<<random_generator()<<"\n";
+    cout<<random_generator()<<"\n";
+    cout<<random_generator()<<"\n";
     return 0;
 }

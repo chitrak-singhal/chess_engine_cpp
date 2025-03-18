@@ -205,3 +205,18 @@ void init_leapers_attacks()
         king_attacks[square]=mask_king_attacks(square);
     }
 }
+
+//random number generator
+unsigned int state = 1804289383;
+unsigned int random_generator()
+{
+    unsigned int num = state;
+    //xorshift32 algorithm
+    num^= (num<<13);
+    num^= (num>>17); 
+    num^= (num<<5);
+
+    state = num; //update state
+
+    return num;
+}
