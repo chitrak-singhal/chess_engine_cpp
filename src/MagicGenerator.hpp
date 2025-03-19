@@ -73,7 +73,7 @@ constexpr U64 rook_magic_numbers[64] = {
     0x20030a0244872ULL,
     0x12001008414402ULL,
     0x2006104900a0804ULL,
-    0x1004081002402ULL,
+    0x1004081002402ULL
 };
 
 constexpr U64 bishop_magic_numbers[64] = {
@@ -140,7 +140,7 @@ constexpr U64 bishop_magic_numbers[64] = {
     0x28000010020204ULL,
     0x6000020202d0240ULL,
     0x8918844842082200ULL,
-    0x4010011029020020ULL,
+    0x4010011029020020ULL
 };
 
 //random number generator
