@@ -179,10 +179,12 @@ U64 generate_rook_attack_sets(int square, U64 blocker)
 }
 
 //function to generate blocker bitboard given blocker bitboard index and relevant occupancy mask
-U64 generate_blocker_bitboard(int blocker_bitboard_index, U64 relevant_occupancy_mask)
+U64 generate_blocker_bitboard(int blocker_bitboard_index,int num_of_relevant_occu, U64 relevant_occupancy_mask)
 {
     U64 blocker = 0ULL; //blocker bitboard
-    int num_of_relevant_occu = bit_count(relevant_occupancy_mask); //number of relevant occupancies in the mask
+    // we have precalculated num_of_relevant_occuapncies now, so we will pass it in the arguments
+    //int num_of_relevant_occu = bit_count(relevant_occupancy_mask); //number of relevant occupancies in the mask
+    
     for (int relevant_occu=0; relevant_occu<num_of_relevant_occu; relevant_occu++) //iterate over the relevant occupancies
     {
         int square = get_fsb(relevant_occupancy_mask); //get the relevant occupancy square
@@ -206,33 +208,3 @@ void init_leapers_attacks()
     }
 }
 
-//random number generator
-unsigned int state = 1804289383;
-unsigned int random_generator_U32()
-{
-    unsigned int num = state;
-    //xorshift32 algorithm
-    num^= (num<<13);
-    num^= (num>>17); 
-    num^= (num<<5);
-
-    state = num; //update state
-
-    return num;
-}
-U64 random_generator_U64() //this random number will be used to generate the magic number candidates
-{
-    //define 4 random numbers low non-zero bits numbers
-    U64 num1 = ((U64)random_generator_U32() & 0xFFFF); //& with 0xFFFF keeps only first 16 bits
-    U64 num2 = ((U64)random_generator_U32() & 0xFFFF);
-    U64 num3 = ((U64)random_generator_U32() & 0xFFFF);
-    U64 num4 = ((U64)random_generator_U32() & 0xFFFF);
-
-    return ((num1)| (num2<<16)|(num3<<32)|(num4<<48));
-}
-
-//generate magic number candidate
-U64 generate_magic_number_candidate()
-{
-    return (random_generator_U64()&random_generator_U64()&random_generator_U64());
-}

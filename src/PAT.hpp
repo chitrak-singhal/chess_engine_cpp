@@ -39,16 +39,11 @@ U64 generate_relevant_occupancy_mask_rook(int square);
 U64 generate_rook_attack_sets(int square, U64 blocker);
 
 //function to generate blocker bitboard given blocker bitboard index and relevant occupancy mask
-U64 generate_blocker_bitboard(int blocker_bitboard_index, U64 relevant_occupancy_mask);
+U64 generate_blocker_bitboard(int blocker_bitboard_index,int num_of_relevant_occu, U64 relevant_occupancy_mask);
 
 //functions to generate attacks for all position for all pieces (PATS)
 //for leaper pieces: (leaper attacks are not affected by blocking pieces, hence leaper and sliding pieces tables have to be generated separately)
 void init_leapers_attacks();
 
-//random number generator
-extern unsigned int state;
-unsigned int random_generator_U32();
-U64 random_generator_U64(); //this random number will be used to generate the magic number candidates
-//generate magic number candidate
-U64 generate_magic_number_candidate();
+
 #endif

@@ -9,6 +9,7 @@ Including system files
 
 #include<iostream>
 #include <array>
+#include<string.h>
 using namespace std;
 
 //including bit manipulation functions
@@ -43,7 +44,8 @@ enum {
 //literal types can be ompletely evaluated at compile time
 // array of literal types is literal type
 // so we use constexpr array<const char*, 64> which is a compile-time constant
-constexpr std::array<const char*, 64> square_to_board = {
+//equivalentally we can also write constexpr const char* square_to_board[64]
+constexpr const char* square_to_board[64] = {
     "a8", "b8", "c8", "d8", "e8", "f8", "g8", "h8",
     "a7", "b7", "c7", "d7", "e7", "f7", "g7", "h7",
     "a6", "b6", "c6", "d6", "e6", "f6", "g6", "h6",
@@ -55,6 +57,7 @@ constexpr std::array<const char*, 64> square_to_board = {
 
 //enum sides to move
 enum {white, black}; //0 means white
+enum {rook, bishop}; //this is to be used for is_bishop flag 
 
 //precalculated relevant occupancy bit count for each square for bishop
 constexpr int relevant_bit_count_bishop[64] ={
@@ -79,6 +82,5 @@ constexpr int relevant_bit_count_rook[64] ={
     11, 10, 10, 10, 10, 10, 10, 11,
     12, 11, 11, 11, 11, 11, 11, 12,
 };
-
 
 #endif

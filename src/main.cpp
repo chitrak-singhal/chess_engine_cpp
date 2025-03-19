@@ -30,6 +30,12 @@ Precalculated Attack Tables (PAT)
 #############################*/
 #include "PAT.hpp"
 
+/*##########################
+
+Pre-saved magic numbers and magic number generator
+
+#############################*/
+#include "MagicGenerator.hpp" 
 
 /*##########################
 
@@ -45,9 +51,6 @@ int main()
     cout<<"Welcome to Domino, never lose again!\n";
     cout<<"####################################\n";
     init_leapers_attacks();
-    cout<<random_generator_U32()<<"\n";
-    cout<<((U64)random_generator_U32()&0xFFFF)<<"\n";
-    cout<<random_generator_U64()<<"\n";
-    cout<<generate_magic_number_candidate()<<"\n";
+    //init_magic_numbers();
     return 0;
 }
