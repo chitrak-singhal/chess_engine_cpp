@@ -11,7 +11,10 @@ Precalculated Attack Tables (PAT)
 U64 pawn_attacks[2][64];
 U64 knight_attacks[64]; //knights have side independent movement
 U64 king_attacks[64];
-
+U64 bishop_attacks[64][512];
+U64 rook_attacks[64][4096];
+U64 bishop_romasks[64]; //relevant occupancy masks
+U64 rook_romasks[64];
 //function to generate pawn attacks
 U64 mask_pawn_attacks(int side, int square)
 {
@@ -184,7 +187,7 @@ U64 generate_blocker_bitboard(int blocker_bitboard_index,int num_of_relevant_occ
     U64 blocker = 0ULL; //blocker bitboard
     // we have precalculated num_of_relevant_occuapncies now, so we will pass it in the arguments
     //int num_of_relevant_occu = bit_count(relevant_occupancy_mask); //number of relevant occupancies in the mask
-    
+
     for (int relevant_occu=0; relevant_occu<num_of_relevant_occu; relevant_occu++) //iterate over the relevant occupancies
     {
         int square = get_fsb(relevant_occupancy_mask); //get the relevant occupancy square
@@ -205,6 +208,39 @@ void init_leapers_attacks()
         pawn_attacks[black][square] = mask_pawn_attacks(black, square);
         knight_attacks[square] = mask_knight_attacks(square);
         king_attacks[square]=mask_king_attacks(square);
+    }
+}
+
+void init_sliding_attacks()
+{
+    for (int square  = 0; square <64; square++)
+    {
+        //store the relevant occupancy mask
+        bishop_romasks[square] = generate_relevant_occupancy_mask_bishop(square);
+        rook_romasks[square] = generate_relevant_occupancy_mask_rook(square);
+
+        int num_of_relevant_occu = relevant_bit_count_bishop[square];
+        int num_of_blocker_bitboard = (1<<num_of_relevant_occu);
+        U64 relevant_occupancy_mask = bishop_romasks[square];
+
+        //index means the blocker_bitboard_index
+        for (int index = 0; index<num_of_blocker_bitboard; index++)
+        {
+            U64 blocker_bitboard = generate_blocker_bitboard(index, num_of_relevant_occu, relevant_occupancy_mask);
+            int magic_index = (int)((blocker_bitboard*bishop_magic_numbers[square])>>(64-num_of_relevant_occu));
+            bishop_attacks[square][magic_index] = generate_bishop_attack_sets(square, blocker_bitboard);
+        }
+        num_of_relevant_occu = relevant_bit_count_rook[square];
+        num_of_blocker_bitboard = (1<<num_of_relevant_occu);
+        relevant_occupancy_mask = rook_romasks[square];
+
+        //index means the blocker_bitboard_index
+        for (int index = 0; index<num_of_blocker_bitboard; index++)
+        {
+            U64 blocker_bitboard = generate_blocker_bitboard(index, num_of_relevant_occu, relevant_occupancy_mask);
+            int magic_index = (int)((blocker_bitboard*rook_magic_numbers[square])>>(64-num_of_relevant_occu));
+            rook_attacks[square][magic_index] = generate_rook_attack_sets(square, blocker_bitboard);
+        }
     }
 }
 

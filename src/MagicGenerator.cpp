@@ -2,7 +2,7 @@
 #include "PAT.hpp"
 /*##########################
 
-Pre-saved magic numbers and magic number generator
+Magic number generator
 
 #############################*/
 //random number generator

@@ -39,6 +39,18 @@ Pre-saved magic numbers and magic number generator
 
 /*##########################
 
+Initialize everything
+
+#############################*/
+
+void init_everything()
+{
+    init_leapers_attacks();
+    init_sliding_attacks();
+}
+
+/*##########################
+
 Main driver
 
 #############################*/
@@ -50,7 +62,16 @@ int main()
     cout<<"####################################\n";
     cout<<"Welcome to Domino, never lose again!\n";
     cout<<"####################################\n";
-    init_leapers_attacks();
-    //init_magic_numbers();
+    init_everything();
+    U64 bitboard = 0ULL;
+    set_bit(bitboard, d6);
+    set_bit(bitboard, b6);
+    set_bit(bitboard, d2);
+    set_bit(bitboard, d1);
+    set_bit(bitboard, h8);
+    set_bit(bitboard, g7);
+    set_bit(bitboard, g4);
+    print_bitboard(bitboard);
+    print_bitboard(get_queen_attack(d4, bitboard));
     return 0;
 }
