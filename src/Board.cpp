@@ -80,5 +80,58 @@ void print_board()
     if ((castle>>0)&1) cout<<"White king side\n";
     if ((castle>>1)&1) cout<<"White queen side\n";
     if ((castle>>2)&1) cout<<"Black king side\n";
-    if ((castle>>3)&1) cout<<"White queen side\n";
+    if ((castle>>3)&1) cout<<"Black queen side\n";
+}
+
+//parse FEN function
+void parse_FEN_string(const char * fen)
+{
+    //reset board, occupancies and state variables
+    memset(bitboards, 0ULL, sizeof(bitboards));
+    memset(occupancies, 0ULL, sizeof(occupancies));
+    side = 0;
+    castle = 0;
+    enpassant = no_square;
+    int ind =0; //index in fen string
+    for (int rank = 0; rank<8; rank++)
+    {
+        for (int file = 0; file<8;file++)
+        {
+            int square  = 8*rank+file;
+            if ((fen[ind]>='a'&&fen[ind]<='z')||(fen[ind]>='A'&&fen[ind]<='Z'))
+            {
+                int piece = char_pieces[(int)fen[ind]]; //piece character to piece number
+                set_bit(bitboards[piece],square); //place the piece
+                ind++;
+            }
+            else if (fen[ind]>='0'&&fen[ind]<='9')
+            {
+                // empty squares, skip this many files
+                file+= (fen[ind]-'0') - 1; //-1 because ++ from for loop
+                ind++;
+            }
+        }
+        ind++;
+    }
+    side = !(fen[ind]=='w'); //if white moves then side 0
+    ind+=2;
+    while(fen[ind]!=' ')
+    {
+        if (fen[ind]=='K') {castle|= wk;} //enums are already set
+        else if (fen[ind]=='Q') {castle|= wq;}
+        else if (fen[ind]=='k') {castle|= bk;}
+        else if (fen[ind]=='q') {castle|= bq;}
+        ind++;
+    }
+    ind++;
+    if (fen[ind]!='-')
+    {
+        int file = (fen[ind]-'a'); //think e6 as example
+        ind++;
+        int rank = 8-(fen[ind]-'0'); //board rank  = 8 -rank, rank = 8 - board rank;
+        ind++;
+        enpassant = 8*rank + file;
+    }
+    ind++;
+    //half moves full moves count to be added
 }

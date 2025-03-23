@@ -55,8 +55,8 @@ void init_everything()
 {
     init_leapers_attacks();
     init_sliding_attacks();
-    char_pieces['P'] = P;
-    char_pieces['N'] = N;
+    char_pieces['P'] = P; //0
+    char_pieces['N'] = N; //1 and so on
     char_pieces['B'] = B;
     char_pieces['R'] = R;
     char_pieces['Q'] = Q;
@@ -86,47 +86,11 @@ int main()
     cout<<"####################################\n";
     cout<<"Welcome to Domino, never lose again!\n";
     cout<<"####################################\n";
+    //initialise everything
     init_everything();
-    set_bit(bitboards[P], a2); 
-    set_bit(bitboards[P], b2);
-    set_bit(bitboards[P], c2); 
-    set_bit(bitboards[P], d2);
-    set_bit(bitboards[P], e2); 
-    set_bit(bitboards[P], f2);
-    set_bit(bitboards[P], g2); 
-    set_bit(bitboards[P], h2);
-    set_bit(bitboards[p], a7); 
-    set_bit(bitboards[p], b7);
-    set_bit(bitboards[p], c7); 
-    set_bit(bitboards[p], d7);
-    set_bit(bitboards[p], e7); 
-    set_bit(bitboards[p], f7);
-    set_bit(bitboards[p], g7); 
-    set_bit(bitboards[p], h7);
-    set_bit(bitboards[R], a1); 
-    set_bit(bitboards[N], b1);
-    set_bit(bitboards[B], c1); 
-    set_bit(bitboards[Q], d1);
-    set_bit(bitboards[K], e1); 
-    set_bit(bitboards[B], f1);
-    set_bit(bitboards[N], g1); 
-    set_bit(bitboards[R], h1);
-    set_bit(bitboards[r], a8); 
-    set_bit(bitboards[n], b8);
-    set_bit(bitboards[b], c8); 
-    set_bit(bitboards[q], d8);
-    set_bit(bitboards[k], e8); 
-    set_bit(bitboards[b], f8);
-    set_bit(bitboards[n], g8); 
-    set_bit(bitboards[r], h8);
-    side=  black;
-    castle |=wk;
-    castle|=bk;
-    enpassant = e3;
+    
+    //parse fen test
+    parse_FEN_string("r2q1rk1/ppp2ppp/2n1bn2/2b1p3/3pP3/3P1NPP/PPP1NPB1/R1BQ1RK1 w q a3 0 9 ");
     print_board();
-    for (int i=P;i<=k;i++)
-    {
-        print_bitboard(bitboards[i]);
-    }
     return 0;
 }
