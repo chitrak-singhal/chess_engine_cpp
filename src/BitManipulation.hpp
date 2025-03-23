@@ -7,10 +7,10 @@ Bit manipulation functions and macros
 
 #############################*/
 
-#define get_bit(bitboard, square) ((bitboard>>(square))&1ULL)
-#define set_bit(bitboard, square) (bitboard|=(1ULL<<(square)))
+#define get_bit(bitboard, square) (((bitboard)>>(square))&1ULL)
+#define set_bit(bitboard, square) ((bitboard)|=(1ULL<<(square)))
 //if we reset using xor, calling reset multiple times can set the bit accidently, so we need an if condition along with it
-#define reset_bit(bitboard, square) {if (get_bit(bitboard, square)) {bitboard^= (1ULL<<(square));}}
+#define reset_bit(bitboard, square) {if (get_bit(bitboard, square)) {(bitboard)^= (1ULL<<(square));}}
 
 //count bits function
 //declared static inline since we will use it often

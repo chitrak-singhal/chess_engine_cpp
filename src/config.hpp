@@ -10,6 +10,11 @@ Including system files
 #include<iostream>
 #include <array>
 #include<string.h>
+//for unicodes
+#ifdef _WIN32 //if comipiling on windows
+    #include <windows.h>  // Windows-specific header
+#endif  // Required for SetConsoleOutputCP()
+
 using namespace std;
 
 //including bit manipulation functions
@@ -35,7 +40,7 @@ enum {
     a4, b4, c4, d4, e4, f4, g4, h4,
     a3, b3, c3, d3, e3, f3, g3, h3, 
     a2, b2, c2, d2, e2, f2, g2, h2,
-    a1, b1, c1, d1, e1, f1, g1, h1,
+    a1, b1, c1, d1, e1, f1, g1, h1, no_square
 };
 
 //covert square number to board square
@@ -56,7 +61,7 @@ constexpr const char* square_to_board[64] = {
     "a1", "b1", "c1", "d1", "e1", "f1", "g1", "h1"};
 
 //enum sides to move
-enum {white, black}; //0 means white
+enum {white, black, both}; //0 means white
 enum {rook, bishop}; //this is to be used for is_bishop flag 
 
 //precalculated relevant occupancy bit count for each square for bishop
@@ -81,6 +86,21 @@ constexpr int relevant_bit_count_rook[64] ={
     11, 10, 10, 10, 10, 10, 10, 11,
     11, 10, 10, 10, 10, 10, 10, 11,
     12, 11, 11, 11, 11, 11, 11, 12,
+};
+
+//castling enum 
+enum {wk=1, wq=2, bk=4, bq=8};
+
+//encoding pieces, uppercase is white, lower case is black
+enum {P, N, B, R, Q, K, p, n, b, r, q, k}; //N is knight k is king
+
+//ASCII pieces
+constexpr char ascii_pieces[13] = "PNBRQKpnbrqk";
+
+//unicode pieces, solid ones are black
+constexpr const char* unicode_pieces[] = {
+    "♙", "♘", "♗", "♖", "♕", "♔",  // White pieces
+    "♟", "♞", "♝", "♜", "♛", "♚"   // Black pieces
 };
 
 /*#######################
