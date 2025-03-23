@@ -44,8 +44,7 @@ U64 bitboards[12];
 U64 occupancies[3];
 
 //whose turn is it
-//initialised to -1 here so that we cannnot start without initializing it properly
-int side = -1;
+int side ;
 
 //en-passant square 
 int enpassant = no_square;//safe initialization
@@ -67,6 +66,54 @@ int castle;
 // 'P' will become index 80 in this int array, and will store 80 value
 // [index] allows us to place at a particular index
 int char_pieces[128] {0};
+
+//print the board
+void print_board()
+{
+    cout<<"\n";
+    //board rank = 8 - rank
+    for (int rank = 0;rank<8;rank++)
+    {
+        cout<<" "<<(8 - rank)<<"  ";
+        for (int file = 0;file<8;file++)
+        {
+            int square = 8*rank + file;
+            int piece = -1;
+            //check all piece bitboards;
+            //remember how we label pieces PNBRQKpnbrqk
+            for (int i=P;i<=k;i++)
+            {
+                if (get_bit(bitboards[i], square)) 
+                {
+                    piece = i; break;
+                }
+            }
+            if (piece==-1) cout<<". ";
+            else 
+            {
+                //print unicode only if windows
+                #ifdef _WIN32
+                    cout<<unicode_pieces[piece]<<" ";
+                #else 
+                    cout<<ascii_pieces[piece]<<" ";
+                #endif
+            }
+        }
+        cout<<"\n";
+    }
+    cout<<"    ";
+    for (char file = 'a'; file<='h'; file++)
+        cout<<file<<" ";
+    cout<<"\n\n";
+    //print other state variables
+    cout<<"Side to move: "<<(!side?"White\n":"Black\n");
+    cout<<"En-passant square: "<<(enpassant==64?"No square":square_to_board[enpassant])<<"\n";
+    cout<<"Possible castles:\n";
+    if ((castle>>0)&1) cout<<"White king side\n";
+    if ((castle>>1)&1) cout<<"White queen side\n";
+    if ((castle>>2)&1) cout<<"Black king side\n";
+    if ((castle>>3)&1) cout<<"White queen side\n";
+}
 
 /*##########################
 
@@ -117,8 +164,46 @@ int main()
     cout<<"Welcome to Domino, never lose again!\n";
     cout<<"####################################\n";
     init_everything();
-    set_bit(bitboards[P], e2); //setting white pawn on e2
-    print_bitboard(bitboards[P]);
-    cout<<("piece: ")<<char_pieces['K']<<"\n";
+    set_bit(bitboards[P], a2); 
+    set_bit(bitboards[P], b2);
+    set_bit(bitboards[P], c2); 
+    set_bit(bitboards[P], d2);
+    set_bit(bitboards[P], e2); 
+    set_bit(bitboards[P], f2);
+    set_bit(bitboards[P], g2); 
+    set_bit(bitboards[P], h2);
+    set_bit(bitboards[p], a7); 
+    set_bit(bitboards[p], b7);
+    set_bit(bitboards[p], c7); 
+    set_bit(bitboards[p], d7);
+    set_bit(bitboards[p], e7); 
+    set_bit(bitboards[p], f7);
+    set_bit(bitboards[p], g7); 
+    set_bit(bitboards[p], h7);
+    set_bit(bitboards[R], a1); 
+    set_bit(bitboards[N], b1);
+    set_bit(bitboards[B], c1); 
+    set_bit(bitboards[Q], d1);
+    set_bit(bitboards[K], e1); 
+    set_bit(bitboards[B], f1);
+    set_bit(bitboards[N], g1); 
+    set_bit(bitboards[R], h1);
+    set_bit(bitboards[r], a8); 
+    set_bit(bitboards[n], b8);
+    set_bit(bitboards[b], c8); 
+    set_bit(bitboards[q], d8);
+    set_bit(bitboards[k], e8); 
+    set_bit(bitboards[b], f8);
+    set_bit(bitboards[n], g8); 
+    set_bit(bitboards[r], h8);
+    side=  black;
+    castle |=wk;
+    castle|=bk;
+    enpassant = e3;
+    print_board();
+    for (int i=P;i<=k;i++)
+    {
+        print_bitboard(bitboards[i]);
+    }
     return 0;
 }
