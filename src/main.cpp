@@ -97,9 +97,8 @@ int main()
     cout<<"####################################\n";
     //initialise everything
     init_everything();
-    parse_FEN_string("8/8/4r3/3B4/8/8/8/8 w - - ");
+    parse_FEN_string(tricky_position);
     print_board();
-    print_bitboard(occupancies[both]);
     print_attacked_squares(white);
     return 0;
 }
