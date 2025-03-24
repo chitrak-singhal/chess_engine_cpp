@@ -134,4 +134,12 @@ void parse_FEN_string(const char * fen)
     }
     ind++;
     //half moves full moves count to be added
+
+    //fill occupancies
+    for (int piece = P; piece <= K; piece++)
+        occupancies[white] |= bitboards[piece];
+    for (int piece = p; piece <= k; piece++)
+        occupancies[black] |= bitboards[piece];
+    occupancies[both] |= occupancies[white];
+    occupancies[both] |= occupancies[black];
 }

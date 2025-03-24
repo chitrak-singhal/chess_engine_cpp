@@ -43,7 +43,16 @@ Define the board
 Magic number generator
 
 #############################*/
+
 #include "MagicGenerator.hpp" 
+
+/*##########################
+
+Move generator
+
+#############################*/
+
+#include "MoveGenerator.hpp"
 
 /*##########################
 
@@ -88,9 +97,9 @@ int main()
     cout<<"####################################\n";
     //initialise everything
     init_everything();
-    
-    //parse fen test
-    parse_FEN_string("r2q1rk1/ppp2ppp/2n1bn2/2b1p3/3pP3/3P1NPP/PPP1NPB1/R1BQ1RK1 w q a3 0 9 ");
+    parse_FEN_string("8/8/4r3/3B4/8/8/8/8 w - - ");
     print_board();
+    print_bitboard(occupancies[both]);
+    print_attacked_squares(white);
     return 0;
 }
