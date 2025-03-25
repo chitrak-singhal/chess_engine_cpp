@@ -95,12 +95,12 @@ static inline void generate_moves()
                         //promotion+capture, check if pawn is on second last rank
                         if (a7<=source_square&&source_square<=h7)
                         {
-                            cout<<"promo capture"<<square_to_board[source_square]<<" "<<square_to_board[target_square]<<"\n"; 
+                            //cout<<"promo capture"<<square_to_board[source_square]<<" "<<square_to_board[target_square]<<"\n"; 
                         }
                         else
                         {
                             //normal capture
-                            cout<<"capture"<<square_to_board[source_square]<<" "<<square_to_board[target_square]<<"\n"; 
+                            //cout<<"capture"<<square_to_board[source_square]<<" "<<square_to_board[target_square]<<"\n"; 
                         }
 
                         //reset the target so we can move on to the next
@@ -116,7 +116,7 @@ static inline void generate_moves()
                         {
                             //get the target
                             int target_enpassant = get_fsb(enpassant_attack);
-                            cout<<"enpassant capture"<<square_to_board[source_square]<<" "<<square_to_board[enpassant]<<"\n"; 
+                            //cout<<"enpassant capture"<<square_to_board[source_square]<<" "<<square_to_board[enpassant]<<"\n"; 
                         }
                     }
 
@@ -135,9 +135,10 @@ static inline void generate_moves()
                     if (!get_bit(occupancies[both], f1) && !get_bit(occupancies[both], g1))
                     {
                         //king and f1 g1 square should not be under attack from black
+                        //alternatively g1 square (final square of the move) will can be checked for legality in the make move function and not here
                         if (!is_square_attacked(e1, black) && !is_square_attacked(f1, black)&& !is_square_attacked(g1, black))
                         {
-                            cout<<"White king side possible\n";
+                            //cout<<"White king side possible\n";
                         }
                     }
                 }
@@ -150,7 +151,7 @@ static inline void generate_moves()
                         //king and c1 d1 square should not be under attack from black
                         if (!is_square_attacked(e1, black) && !is_square_attacked(c1, black) && !is_square_attacked(d1, black))
                         {
-                            cout<<"White queen side possible\n";
+                            //cout<<"White queen side possible\n";
                         }
                     }
                 }
@@ -205,12 +206,12 @@ static inline void generate_moves()
                         //promotion+capture, check if pawn is on second rank
                         if (a2<=source_square&&source_square<=h2)
                         {
-                            cout<<"promo capture"<<square_to_board[source_square]<<" "<<square_to_board[target_square]<<"\n"; 
+                            //cout<<"promo capture"<<square_to_board[source_square]<<" "<<square_to_board[target_square]<<"\n"; 
                         }   
                         else
                         {
                             //normal capture
-                            cout<<"capture"<<square_to_board[source_square]<<" "<<square_to_board[target_square]<<"\n"; 
+                            //cout<<"capture"<<square_to_board[source_square]<<" "<<square_to_board[target_square]<<"\n"; 
                         }
 
                         //reset the target so we can move on to the next
@@ -226,7 +227,7 @@ static inline void generate_moves()
                         {
                             //get the target
                             int target_enpassant = get_fsb(enpassant_attack);
-                            cout<<"enpassant capture"<<square_to_board[source_square]<<" "<<square_to_board[enpassant]<<"\n"; 
+                            //cout<<"enpassant capture"<<square_to_board[source_square]<<" "<<square_to_board[enpassant]<<"\n"; 
                         }
                     }
 
@@ -246,7 +247,7 @@ static inline void generate_moves()
                         //king and f8 g8 square should not be under attack from white
                         if (!is_square_attacked(e8, white) && !is_square_attacked(f8, white)&& !is_square_attacked(g8,white))
                         {
-                            cout<<"Black king side possible\n";
+                            //cout<<"Black king side possible\n";
                         }
                     }
                 }
@@ -259,21 +260,133 @@ static inline void generate_moves()
                         //king and c8 d8 square should not be under attack from white
                         if (!is_square_attacked(e8, white) && !is_square_attacked(c8, white) && !is_square_attacked(d8, white))
                         {
-                            cout<<"Black queen side possible\n";
+                            //cout<<"Black queen side possible\n";
                         }
                     }
                 }
             }
         }
         //generate knight moves
-
+        if ((side==white&&piece==N)||(side==black&&piece==n))
+        {
+            //loop over all knights
+            while(bitboard)
+            {
+                source_square = get_fsb(bitboard);
+                //we can move anywhere where there is not a piece of our own color
+                attacks = (knight_attacks[source_square] & (~occupancies[side]));
+                // loop over all possible attacks
+                while(attacks)
+                {
+                    target_square = get_fsb(attacks);
+                    //quiet move if square is unoccupied
+                    if (!get_bit(occupancies[both], target_square))
+                    //cout<<side<<" Knight quiet "<<square_to_board[source_square]<<" "<<square_to_board[target_square]<<"\n";
+                    //capture move if square is occupied
+                    ;else 
+                    //cout<<side<<" Knight capture "<<square_to_board[source_square]<<" "<<square_to_board[target_square]<<"\n";
+                    ;reset_bit(attacks, target_square);
+                }
+                reset_bit(bitboard, source_square);
+            }
+        }
         //generate bishop moves
-
+        if ((side==white&&piece==B)||(side==black&&piece==b))
+        {
+            //loop over all bishops
+            while(bitboard)
+            {
+                source_square = get_fsb(bitboard);
+                //we can move anywhere where there is not a piece of our own color
+                attacks = (get_bishop_attack(source_square, occupancies[both]) & (~occupancies[side]));
+                // loop over all possible attacks
+                while(attacks)
+                {
+                    target_square = get_fsb(attacks);
+                    //quiet move if square is unoccupied
+                    if (!get_bit(occupancies[both], target_square))
+                    //cout<<side<<" Bishop quiet "<<square_to_board[source_square]<<" "<<square_to_board[target_square]<<"\n";
+                    
+                    //capture move if square is occupied
+                    ;else 
+                    //cout<<side<<" Bishop capture "<<square_to_board[source_square]<<" "<<square_to_board[target_square]<<"\n";
+                    ;reset_bit(attacks, target_square);
+                }
+                reset_bit(bitboard, source_square);
+            }
+        }
         //generate rook moves
-
+        if ((side==white&&piece==R)||(side==black&&piece==r))
+        {
+            //loop over all rooks
+            while(bitboard)
+            {
+                source_square = get_fsb(bitboard);
+                //we can move anywhere where there is not a piece of our own color
+                attacks = (get_rook_attack(source_square, occupancies[both]) & (~occupancies[side]));
+                // loop over all possible attacks
+                while(attacks)
+                {
+                    target_square = get_fsb(attacks);
+                    //quiet move if square is unoccupied
+                    if (!get_bit(occupancies[both], target_square))
+                    //cout<<side<<" rook quiet "<<square_to_board[source_square]<<" "<<square_to_board[target_square]<<"\n";
+                    //capture move if square is occupied
+                    ;else 
+                    //cout<<side<<" rook capture"<<square_to_board[source_square]<<" "<<square_to_board[target_square]<<"\n";
+                    ;reset_bit(attacks, target_square);
+                }
+                reset_bit(bitboard, source_square);
+            }
+        }
         //generate queen moves
-
+        if ((side==white&&piece==Q)||(side==black&&piece==q))
+        {
+            //loop over all queens
+            while(bitboard)
+            {
+                source_square = get_fsb(bitboard);
+                //we can move anywhere where there is not a piece of our own color
+                attacks = (get_queen_attack(source_square, occupancies[both]) & (~occupancies[side]));
+                // loop over all possible attacks
+                while(attacks)
+                {
+                    target_square = get_fsb(attacks);
+                    //quiet move if square is unoccupied
+                    if (!get_bit(occupancies[both], target_square))
+                    //cout<<side<<" queen quiet "<<square_to_board[source_square]<<" "<<square_to_board[target_square]<<"\n";
+                    //capture move if square is occupied
+                    ;else 
+                    //cout<<side<<"queen capture"<<square_to_board[source_square]<<" "<<square_to_board[target_square]<<"\n";
+                    ;reset_bit(attacks, target_square);
+                }
+                reset_bit(bitboard, source_square);
+            }
+        }
         //generate king moves
+        if ((side==white&&piece==K)||(side==black&&piece==k))
+        {
+            //loop over king
+            while(bitboard)
+            {
+                source_square = get_fsb(bitboard);
+                //we can move anywhere where there is not a piece of our own color
+                attacks = (king_attacks[source_square] & (~occupancies[side]));
+                // loop over all possible attacks
+                while(attacks)
+                {
+                    target_square = get_fsb(attacks);
+                    //quiet move if square is unoccupied
+                    if (!get_bit(occupancies[both], target_square))
+                    //cout<<side<<" King quiet "<<square_to_board[source_square]<<" "<<square_to_board[target_square]<<"\n";
+                    //capture move if square is occupied
+                    ;else 
+                    //cout<<side<<" king capture "<<square_to_board[source_square]<<" "<<square_to_board[target_square]<<"\n";
+                    ;reset_bit(attacks, target_square);
+                }
+                reset_bit(bitboard, source_square);
+            }
+        }
     }
 }
 
