@@ -29,6 +29,33 @@ static inline int is_square_attacked(int square, int side)
 //print function for testing
 void print_attacked_squares(int side);
 
+/*
+          binary move bits                               hexidecimal constants
+    
+    0000 0000 0000 0000 0011 1111    source square       0x3f
+    0000 0000 0000 1111 1100 0000    target square       0xfc0
+    0000 0000 1111 0000 0000 0000    piece               0xf000
+    0000 1111 0000 0000 0000 0000    promoted piece      0xf0000
+    0001 0000 0000 0000 0000 0000    capture flag        0x100000
+    0010 0000 0000 0000 0000 0000    double push flag    0x200000
+    0100 0000 0000 0000 0000 0000    enpassant flag      0x400000
+    1000 0000 0000 0000 0000 0000    castling flag       0x800000
+*/
+
+//encode move
+#define encode_move(source,target, piece,promo_piece, capture, double, enpassant, castling) \
+((source)|(target<<6)|(piece<<12)|(promo_piece<<16)|(capture<<20)|(double<<21)|(enpassant<<22)|(castling<<23))
+
+//decode move
+#define decode_move_source(move) (move & 0x3f)
+#define decode_move_target(move) ((move & 0xfc0) >> 6)
+#define decode_move_piece(move) ((move & 0xf000) >> 12)
+#define decode_move_promo_piece(move) ((move & 0xf0000) >> 16)
+#define decode_move_capture(move) (move & 0x100000)
+#define decode_move_double(move) (move & 0x200000)
+#define decode_move_enpassant(move) (move & 0x400000)
+#define decode_move_castling(move) (move & 0x800000)
+
 //function to generate all legal moves
 static inline void generate_moves()
 {

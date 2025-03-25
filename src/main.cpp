@@ -99,6 +99,20 @@ int main()
     init_everything();
     parse_FEN_string("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1 ");
     print_board();
-    generate_moves();
+    int x = encode_move(5,6,K,Q,1,0,0,1);
+    for (int i=23;i>=0;i--)
+    {
+        cout<<((x>>i)&1);
+        if ((i%4)==0) cout<<" ";
+    }
+    cout<<"\n";
+    cout<<decode_move_source(x)<<" ";
+    cout<<decode_move_target(x)<<" ";
+    cout<<decode_move_piece(x)<<" ";
+    cout<<decode_move_promo_piece(x)<<" ";
+    cout<<decode_move_capture(x)<<" ";
+    cout<<decode_move_double(x)<<" ";
+    cout<<decode_move_enpassant(x)<<" ";
+    cout<<decode_move_castling(x)<<" ";
     return 0;
 }
