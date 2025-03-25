@@ -29,4 +29,252 @@ static inline int is_square_attacked(int square, int side)
 //print function for testing
 void print_attacked_squares(int side);
 
+//function to generate all legal moves
+static inline void generate_moves()
+{
+    //source & target square
+    int source_square, target_square;
+
+    //copy the current piece's bitboard and it's attacks
+    //we will extract source squares from bitboard, and target squares from attacks using FSB
+    //we will ensure we dont capture our own piece
+    U64 bitboard, attacks;
+
+    //loop over all pieces to genereate moves for them
+    for (int piece = P; piece<=k;piece++)
+    {
+        //copy the piece bitboard
+        bitboard = bitboards[piece];
+
+        //generate white pawn and white king castling moves
+        //special moves like double push, enpassant etc.
+        if (side==white)
+        {
+            if (piece==P)
+            {
+                //loop over the bitboard continuously getting the FSB
+                while(bitboard)
+                {
+                    //get the square of the pawn
+                    source_square = get_fsb(bitboard);
+
+                    //######generate quiet pawn moves#####
+                    //one step ahead target
+                    target_square = source_square - 8;
+                    
+                    // ensure target_square is valid, and it is empty
+                    if ((a8<=target_square&&target_square<=h1)&& !get_bit(occupancies[both], target_square))
+                    {
+                        //promotions, check if pawn is on second last rank
+                        if (a7<=source_square&&source_square<=h7)
+                        {
+                            
+                        }
+                        else
+                        {
+                            //move one square ahead
+                            
+                            //move two square ahead if on second rank, and the square 2 steps ahead is empty
+                            if ((a2<=source_square&&source_square<=h2)&& !get_bit(occupancies[both], (source_square-16)))
+                            {
+                                
+                            }
+                        }
+                    }
+                    
+                    //######generate capture moves#####
+                    // can capture only black so take AND with its occupancy
+                    attacks = (pawn_attacks[white][source_square] & occupancies[black]);
+
+                    //iterate over the possible targets using FSB
+                    while(attacks)
+                    {
+                        //get the target
+                        target_square = get_fsb(attacks);
+
+                        //promotion+capture, check if pawn is on second last rank
+                        if (a7<=source_square&&source_square<=h7)
+                        {
+                            cout<<"promo capture"<<square_to_board[source_square]<<" "<<square_to_board[target_square]<<"\n"; 
+                        }
+                        else
+                        {
+                            //normal capture
+                            cout<<"capture"<<square_to_board[source_square]<<" "<<square_to_board[target_square]<<"\n"; 
+                        }
+
+                        //reset the target so we can move on to the next
+                        reset_bit(attacks, target_square);
+                    }
+
+                    //######generate enpassant moves#####
+                    if (enpassant!=no_square) //enpassant exists
+                    {
+                        //do AND of enpassant square with pawn attacks 
+                        U64 enpassant_attack = (pawn_attacks[white][source_square] & (1ULL<<enpassant));
+                        if (enpassant_attack) //if there is indeed enpassant attack
+                        {
+                            //get the target
+                            int target_enpassant = get_fsb(enpassant_attack);
+                            cout<<"enpassant capture"<<square_to_board[source_square]<<" "<<square_to_board[enpassant]<<"\n"; 
+                        }
+                    }
+
+                    //reset this square so we can move to the next
+                    reset_bit(bitboard, source_square);
+                }
+            }
+
+            //Castling moves
+            if (piece==K)
+            {
+                //king side castling possible 
+                if (castle & wk)
+                {
+                    //nothing should be there between king and rook
+                    if (!get_bit(occupancies[both], f1) && !get_bit(occupancies[both], g1))
+                    {
+                        //king and f1 g1 square should not be under attack from black
+                        if (!is_square_attacked(e1, black) && !is_square_attacked(f1, black)&& !is_square_attacked(g1, black))
+                        {
+                            cout<<"White king side possible\n";
+                        }
+                    }
+                }
+                //queen side castling available
+                if (castle & wq)
+                {
+                    //nothing should be there between king and rook
+                    if (!get_bit(occupancies[both], b1) && !get_bit(occupancies[both], c1)&& !get_bit(occupancies[both], d1))
+                    {
+                        //king and c1 d1 square should not be under attack from black
+                        if (!is_square_attacked(e1, black) && !is_square_attacked(c1, black) && !is_square_attacked(d1, black))
+                        {
+                            cout<<"White queen side possible\n";
+                        }
+                    }
+                }
+            }
+        } 
+        //black pawn and black king castling moves
+        else
+        {
+            if (piece==p)
+            {
+                //loop over the bitboard continuously getting the FSB
+                while(bitboard)
+                {
+                    //get the square of the pawn
+                    source_square = get_fsb(bitboard);
+                    
+
+                    //######generate quiet pawn moves#####
+                    //one step below since this a black pawn target
+                    target_square = source_square + 8;
+                    
+                    // ensure target_square is valid, and it is empty
+                    if ((a8<=target_square&&target_square<=h1)&& !get_bit(occupancies[both], target_square))
+                    {
+                        //promotions, check if pawn is on second rank
+                        if (a2<=source_square&&source_square<=h2)
+                        {
+                            
+                        }
+                        else
+                        {
+                            //move one square below
+                            
+                            //move two square below if on second last rank, and the square 2 steps ahead is empty
+                            if ((a7<=source_square&&source_square<=h7)&& !get_bit(occupancies[both], (source_square+16)))
+                            {
+                                
+                            }
+                        }
+                    }
+                    
+                    //######generate capture moves#####
+                    // can capture only white so take AND with its occupancy
+                    attacks = (pawn_attacks[black][source_square] & occupancies[white]);
+
+                    //iterate over the possible targets using FSB
+                    while(attacks)
+                    {
+                        //get the target
+                        target_square = get_fsb(attacks);
+
+                        //promotion+capture, check if pawn is on second rank
+                        if (a2<=source_square&&source_square<=h2)
+                        {
+                            cout<<"promo capture"<<square_to_board[source_square]<<" "<<square_to_board[target_square]<<"\n"; 
+                        }   
+                        else
+                        {
+                            //normal capture
+                            cout<<"capture"<<square_to_board[source_square]<<" "<<square_to_board[target_square]<<"\n"; 
+                        }
+
+                        //reset the target so we can move on to the next
+                        reset_bit(attacks, target_square);
+                    }
+
+                    //######generate enpassant moves#####
+                    if (enpassant!=no_square) //enpassant exists
+                    {
+                        //do AND of enpassant square with pawn attacks 
+                        U64 enpassant_attack = (pawn_attacks[black][source_square] & (1ULL<<enpassant));
+                        if (enpassant_attack) //if there is indeed enpassant attack
+                        {
+                            //get the target
+                            int target_enpassant = get_fsb(enpassant_attack);
+                            cout<<"enpassant capture"<<square_to_board[source_square]<<" "<<square_to_board[enpassant]<<"\n"; 
+                        }
+                    }
+
+                    //reset this square so we can move to the next
+                    reset_bit(bitboard, source_square);
+                }
+            }
+            //Castling moves
+            if (piece==k)
+            {
+                //king side castling possible 
+                if (castle & bk)
+                {
+                    //nothing should be there between king and rook
+                    if (!get_bit(occupancies[both], f8) && !get_bit(occupancies[both], g8))
+                    {
+                        //king and f8 g8 square should not be under attack from white
+                        if (!is_square_attacked(e8, white) && !is_square_attacked(f8, white)&& !is_square_attacked(g8,white))
+                        {
+                            cout<<"Black king side possible\n";
+                        }
+                    }
+                }
+                //queen side castling available
+                if (castle & bq)
+                {
+                    //nothing should be there between king and rook
+                    if (!get_bit(occupancies[both], b8) && !get_bit(occupancies[both], c8)&& !get_bit(occupancies[both], d8))
+                    {
+                        //king and c8 d8 square should not be under attack from white
+                        if (!is_square_attacked(e8, white) && !is_square_attacked(c8, white) && !is_square_attacked(d8, white))
+                        {
+                            cout<<"Black queen side possible\n";
+                        }
+                    }
+                }
+            }
+        }
+        //generate knight moves
+
+        //generate bishop moves
+
+        //generate rook moves
+
+        //generate queen moves
+
+        //generate king moves
+    }
+}
+
 #endif 

@@ -97,8 +97,8 @@ int main()
     cout<<"####################################\n";
     //initialise everything
     init_everything();
-    parse_FEN_string(tricky_position);
+    parse_FEN_string("r3k1br/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPpP/R3K2R b KQkq - 0 1 ");
     print_board();
-    print_attacked_squares(white);
+    generate_moves();
     return 0;
 }
