@@ -30,6 +30,9 @@ these are enum'ed in config
 */
 int castle;
 
+//fifty move rule counter
+int fifty;
+
 //we need to convert chars 'P' to constant P , to be used by enum to convert to number index
 // 'P' will become index 80 in this int array, and will store 80 value
 // [index] allows us to place at a particular index
@@ -81,6 +84,7 @@ void print_board()
     if ((castle>>1)&1) cout<<"White queen side\n";
     if ((castle>>2)&1) cout<<"Black king side\n";
     if ((castle>>3)&1) cout<<"Black queen side\n";
+    cout<<"Fifty move counter: "<<fifty<<"\n";
 }
 
 //parse FEN function
@@ -131,9 +135,21 @@ void parse_FEN_string(const char * fen)
         int rank = 8-(fen[ind]-'0'); //board rank  = 8 -rank, rank = 8 - board rank;
         ind++;
         enpassant = 8*rank + file;
+        ind++;
     }
+    else ind+=2; 
+    
+    //half move counter
+    //temporary variable to store number of half moves
+    int half_moves = 0;
+    while(fen[ind]!=' ')
+    {
+        half_moves = half_moves*10 + (fen[ind]-'0');
+        ind++;
+    }
+    fifty = half_moves;
     ind++;
-    //half moves full moves count to be added
+    //full moves count to be added
 
     //fill occupancies
     for (int piece = P; piece <= K; piece++)
