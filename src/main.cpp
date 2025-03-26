@@ -76,6 +76,15 @@ void init_everything()
     char_pieces['r'] = r;
     char_pieces['q'] = q;
     char_pieces['k'] = k;
+    //according to uci protocol all promoted pieces are in lower case
+    promoted_pieces[Q] = 'q';
+    promoted_pieces[R] = 'r';
+    promoted_pieces[B] = 'b';
+    promoted_pieces[N] = 'n';
+    promoted_pieces[q] = 'q';
+    promoted_pieces[r] = 'r';
+    promoted_pieces[b] = 'b';
+    promoted_pieces[n] = 'n';
 }
 
 /*##########################
@@ -99,20 +108,8 @@ int main()
     init_everything();
     parse_FEN_string("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1 ");
     print_board();
-    int x = encode_move(5,6,K,Q,1,0,0,1);
-    for (int i=23;i>=0;i--)
-    {
-        cout<<((x>>i)&1);
-        if ((i%4)==0) cout<<" ";
-    }
-    cout<<"\n";
-    cout<<decode_move_source(x)<<" ";
-    cout<<decode_move_target(x)<<" ";
-    cout<<decode_move_piece(x)<<" ";
-    cout<<decode_move_promo_piece(x)<<" ";
-    cout<<decode_move_capture(x)<<" ";
-    cout<<decode_move_double(x)<<" ";
-    cout<<decode_move_enpassant(x)<<" ";
-    cout<<decode_move_castling(x)<<" ";
+    int move = encode_move(d7,e8,B,Q,0,0,0,1);
+    move_list.add_move(move);
+    move_list.print_move_list();
     return 0;
 }

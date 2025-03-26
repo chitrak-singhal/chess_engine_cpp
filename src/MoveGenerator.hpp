@@ -35,7 +35,7 @@ void print_attacked_squares(int side);
     0000 0000 0000 0000 0011 1111    source square       0x3f
     0000 0000 0000 1111 1100 0000    target square       0xfc0
     0000 0000 1111 0000 0000 0000    piece               0xf000
-    0000 1111 0000 0000 0000 0000    promoted piece      0xf0000
+    0000 1111 0000 0000 0000 0000    promoted piece      0xf0000  0 means no promotion
     0001 0000 0000 0000 0000 0000    capture flag        0x100000
     0010 0000 0000 0000 0000 0000    double push flag    0x200000
     0100 0000 0000 0000 0000 0000    enpassant flag      0x400000
@@ -55,6 +55,66 @@ void print_attacked_squares(int side);
 #define decode_move_double(move) (move & 0x200000)
 #define decode_move_enpassant(move) (move & 0x400000)
 #define decode_move_castling(move) (move & 0x800000)
+
+//convert promoted piece to character
+extern char promoted_pieces[128];
+
+//move list
+class MoveList 
+{
+    //store the moves, 256 is sufficient to store moves of one cycle 
+    int moves[256];
+    //index of the list
+    int index;
+
+    public:
+    //constructor
+    MoveList()
+    {
+        index = 0;
+    }
+    
+    //add move function
+    void add_move(int move)
+    {
+        //store move
+        moves[index] = move;
+        //increment index
+        index++;
+    }
+
+    //print move function according to UCI protocol format
+    void print_move(int move)
+    {
+        //if no prmotion (0 value) promoted_pieces gives null char, so nothing printed
+        cout<<square_to_board[decode_move_source(move)]<<square_to_board[decode_move_target(move)]<<promoted_pieces[decode_move_promo_piece(move)]<<"\n";
+    }
+
+    //print move list
+    void print_move_list()
+    {
+        cout<<"\n#### MOVE LIST ####\n";
+        cout<<"move,  piece, capture, double, enpassant, castling\n";
+        //loop over all moves
+        for (int i=0;i<index;i++)
+        {
+            cout<<square_to_board[decode_move_source(moves[i])]<<square_to_board[decode_move_target(moves[i])]<<promoted_pieces[decode_move_promo_piece(moves[i])];
+            //print unicode only if windows
+            #ifdef _WIN32
+                cout<<"    "<<unicode_pieces[decode_move_piece(moves[i])]<<"    ";
+            #else 
+                cout<<"  "<<ascii_pieces[piece]<<"  ";
+            #endif
+            cout<<"    "<<bool(decode_move_capture(moves[i]))<<"    ";
+            cout<<"    "<<bool(decode_move_double(moves[i]))<<"    ";
+            cout<<"    "<<bool(decode_move_enpassant(moves[i]))<<"    ";
+            cout<<"    "<<bool(decode_move_castling(moves[i]))<<"    \n";
+        }
+        cout<<"Total number of moves: "<<index<<"\n\n";
+    }
+};
+//move list object
+extern MoveList move_list;
 
 //function to generate all legal moves
 static inline void generate_moves()
