@@ -155,16 +155,19 @@ static inline void generate_moves()
                         //promotions, check if pawn is on second last rank
                         if (a7<=source_square&&source_square<=h7)
                         {
-                            
+                            move_list.add_move(encode_move(source_square, target_square, piece, Q, 0, 0, 0, 0));
+                            move_list.add_move(encode_move(source_square, target_square, piece, R, 0, 0, 0, 0));
+                            move_list.add_move(encode_move(source_square, target_square, piece, B, 0, 0, 0, 0));
+                            move_list.add_move(encode_move(source_square, target_square, piece, N, 0, 0, 0, 0));
                         }
                         else
                         {
                             //move one square ahead
-                            
+                            move_list.add_move(encode_move(source_square, target_square, piece, 0, 0, 0, 0, 0));
                             //move two square ahead if on second rank, and the square 2 steps ahead is empty
                             if ((a2<=source_square&&source_square<=h2)&& !get_bit(occupancies[both], (source_square-16)))
                             {
-                                
+                                move_list.add_move(encode_move(source_square, (source_square-16), piece, 0, 0, 1, 0, 0));
                             }
                         }
                     }
@@ -183,10 +186,15 @@ static inline void generate_moves()
                         if (a7<=source_square&&source_square<=h7)
                         {
                             //cout<<"promo capture"<<square_to_board[source_square]<<" "<<square_to_board[target_square]<<"\n"; 
+                            move_list.add_move(encode_move(source_square, target_square, piece, Q, 1, 0, 0, 0));
+                            move_list.add_move(encode_move(source_square, target_square, piece, R, 1, 0, 0, 0));
+                            move_list.add_move(encode_move(source_square, target_square, piece, B, 1, 0, 0, 0));
+                            move_list.add_move(encode_move(source_square, target_square, piece, N, 1, 0, 0, 0));
                         }
                         else
                         {
                             //normal capture
+                            move_list.add_move(encode_move(source_square, target_square, piece, 0, 1, 0, 0, 0));
                             //cout<<"capture"<<square_to_board[source_square]<<" "<<square_to_board[target_square]<<"\n"; 
                         }
 
@@ -204,6 +212,7 @@ static inline void generate_moves()
                             //get the target
                             int target_enpassant = get_fsb(enpassant_attack);
                             //cout<<"enpassant capture"<<square_to_board[source_square]<<" "<<square_to_board[enpassant]<<"\n"; 
+                            move_list.add_move(encode_move(source_square, target_enpassant, piece, 0, 1, 0, 1, 0));
                         }
                     }
 
@@ -226,6 +235,7 @@ static inline void generate_moves()
                         if (!is_square_attacked(e1, black) && !is_square_attacked(f1, black)&& !is_square_attacked(g1, black))
                         {
                             //cout<<"White king side possible\n";
+                            move_list.add_move(encode_move(e1, g1, piece, 0, 0, 0, 0, 1));
                         }
                     }
                 }
@@ -239,6 +249,7 @@ static inline void generate_moves()
                         if (!is_square_attacked(e1, black) && !is_square_attacked(c1, black) && !is_square_attacked(d1, black))
                         {
                             //cout<<"White queen side possible\n";
+                            move_list.add_move(encode_move(e1, c1, piece, 0, 0, 0, 0, 1));
                         }
                     }
                 }
@@ -266,16 +277,19 @@ static inline void generate_moves()
                         //promotions, check if pawn is on second rank
                         if (a2<=source_square&&source_square<=h2)
                         {
-                            
+                            move_list.add_move(encode_move(source_square, target_square, piece, q, 0, 0, 0, 0));
+                            move_list.add_move(encode_move(source_square, target_square, piece, r, 0, 0, 0, 0));
+                            move_list.add_move(encode_move(source_square, target_square, piece, b, 0, 0, 0, 0));
+                            move_list.add_move(encode_move(source_square, target_square, piece, n, 0, 0, 0, 0));
                         }
                         else
                         {
                             //move one square below
-                            
+                            move_list.add_move(encode_move(source_square, target_square, piece, 0, 0, 0, 0, 0));
                             //move two square below if on second last rank, and the square 2 steps ahead is empty
                             if ((a7<=source_square&&source_square<=h7)&& !get_bit(occupancies[both], (source_square+16)))
                             {
-                                
+                                move_list.add_move(encode_move(source_square, (source_square+16), piece, 0, 0, 1, 0, 0));
                             }
                         }
                     }
@@ -294,10 +308,15 @@ static inline void generate_moves()
                         if (a2<=source_square&&source_square<=h2)
                         {
                             //cout<<"promo capture"<<square_to_board[source_square]<<" "<<square_to_board[target_square]<<"\n"; 
+                            move_list.add_move(encode_move(source_square, target_square, piece, q, 1, 0, 0, 0));
+                            move_list.add_move(encode_move(source_square, target_square, piece, r, 1, 0, 0, 0));
+                            move_list.add_move(encode_move(source_square, target_square, piece, b, 1, 0, 0, 0));
+                            move_list.add_move(encode_move(source_square, target_square, piece, n, 1, 0, 0, 0));
                         }   
                         else
                         {
                             //normal capture
+                            move_list.add_move(encode_move(source_square, target_square, piece, 0, 1, 0, 0, 0));
                             //cout<<"capture"<<square_to_board[source_square]<<" "<<square_to_board[target_square]<<"\n"; 
                         }
 
@@ -315,6 +334,7 @@ static inline void generate_moves()
                             //get the target
                             int target_enpassant = get_fsb(enpassant_attack);
                             //cout<<"enpassant capture"<<square_to_board[source_square]<<" "<<square_to_board[enpassant]<<"\n"; 
+                            move_list.add_move(encode_move(source_square, target_enpassant, piece, 0, 1, 0, 1, 0));
                         }
                     }
 
@@ -335,6 +355,7 @@ static inline void generate_moves()
                         if (!is_square_attacked(e8, white) && !is_square_attacked(f8, white)&& !is_square_attacked(g8,white))
                         {
                             //cout<<"Black king side possible\n";
+                            move_list.add_move(encode_move(e8, g8, piece, 0, 0, 0, 0, 1));
                         }
                     }
                 }
@@ -348,6 +369,7 @@ static inline void generate_moves()
                         if (!is_square_attacked(e8, white) && !is_square_attacked(c8, white) && !is_square_attacked(d8, white))
                         {
                             //cout<<"Black queen side possible\n";
+                            move_list.add_move(encode_move(e8, c8, piece, 0, 0, 0, 0, 1));
                         }
                     }
                 }
@@ -369,10 +391,12 @@ static inline void generate_moves()
                     //quiet move if square is unoccupied
                     if (!get_bit(occupancies[both], target_square))
                     //cout<<side<<" Knight quiet "<<square_to_board[source_square]<<" "<<square_to_board[target_square]<<"\n";
+                        move_list.add_move(encode_move(source_square, target_square, piece, 0, 0, 0, 0, 0));
                     //capture move if square is occupied
-                    ;else 
+                    else 
                     //cout<<side<<" Knight capture "<<square_to_board[source_square]<<" "<<square_to_board[target_square]<<"\n";
-                    ;reset_bit(attacks, target_square);
+                        move_list.add_move(encode_move(source_square, target_square, piece, 0, 1, 0, 0, 0));
+                    reset_bit(attacks, target_square);
                 }
                 reset_bit(bitboard, source_square);
             }
@@ -393,11 +417,12 @@ static inline void generate_moves()
                     //quiet move if square is unoccupied
                     if (!get_bit(occupancies[both], target_square))
                     //cout<<side<<" Bishop quiet "<<square_to_board[source_square]<<" "<<square_to_board[target_square]<<"\n";
-                    
+                        move_list.add_move(encode_move(source_square, target_square, piece, 0, 0, 0, 0, 0));
                     //capture move if square is occupied
-                    ;else 
+                    else 
                     //cout<<side<<" Bishop capture "<<square_to_board[source_square]<<" "<<square_to_board[target_square]<<"\n";
-                    ;reset_bit(attacks, target_square);
+                        move_list.add_move(encode_move(source_square, target_square, piece, 0, 1, 0, 0, 0));
+                    reset_bit(attacks, target_square);
                 }
                 reset_bit(bitboard, source_square);
             }
@@ -418,10 +443,12 @@ static inline void generate_moves()
                     //quiet move if square is unoccupied
                     if (!get_bit(occupancies[both], target_square))
                     //cout<<side<<" rook quiet "<<square_to_board[source_square]<<" "<<square_to_board[target_square]<<"\n";
+                        move_list.add_move(encode_move(source_square, target_square, piece, 0, 0, 0, 0, 0));
                     //capture move if square is occupied
-                    ;else 
+                    else 
                     //cout<<side<<" rook capture"<<square_to_board[source_square]<<" "<<square_to_board[target_square]<<"\n";
-                    ;reset_bit(attacks, target_square);
+                        move_list.add_move(encode_move(source_square, target_square, piece, 0, 1, 0, 0, 0));
+                    reset_bit(attacks, target_square);
                 }
                 reset_bit(bitboard, source_square);
             }
@@ -442,10 +469,12 @@ static inline void generate_moves()
                     //quiet move if square is unoccupied
                     if (!get_bit(occupancies[both], target_square))
                     //cout<<side<<" queen quiet "<<square_to_board[source_square]<<" "<<square_to_board[target_square]<<"\n";
+                        move_list.add_move(encode_move(source_square, target_square, piece, 0, 0, 0, 0, 0));
                     //capture move if square is occupied
-                    ;else 
+                    else 
                     //cout<<side<<"queen capture"<<square_to_board[source_square]<<" "<<square_to_board[target_square]<<"\n";
-                    ;reset_bit(attacks, target_square);
+                        move_list.add_move(encode_move(source_square, target_square, piece, 0, 1, 0, 0, 0));
+                    reset_bit(attacks, target_square);
                 }
                 reset_bit(bitboard, source_square);
             }
@@ -466,10 +495,12 @@ static inline void generate_moves()
                     //quiet move if square is unoccupied
                     if (!get_bit(occupancies[both], target_square))
                     //cout<<side<<" King quiet "<<square_to_board[source_square]<<" "<<square_to_board[target_square]<<"\n";
+                        move_list.add_move(encode_move(source_square, target_square, piece, 0, 0, 0, 0, 0));
                     //capture move if square is occupied
-                    ;else 
+                    else 
                     //cout<<side<<" king capture "<<square_to_board[source_square]<<" "<<square_to_board[target_square]<<"\n";
-                    ;reset_bit(attacks, target_square);
+                        move_list.add_move(encode_move(source_square, target_square, piece, 0, 1, 0, 0, 0));
+                    reset_bit(attacks, target_square);
                 }
                 reset_bit(bitboard, source_square);
             }
