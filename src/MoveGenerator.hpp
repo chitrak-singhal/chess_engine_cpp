@@ -508,4 +508,19 @@ static inline void generate_moves()
     }
 }
 
+// preserve board state
+//sizeof is slower so we use constant value as we already know it
+#define copy_board()\
+    U64 bitboards_copy[12], occupancies_copy[3];\
+    memcpy(bitboards_copy, bitboards, 96);\
+    memcpy(occupancies_copy, occupancies, 24);\
+    int side_copy = side, enpassant_copy = enpassant, castle_copy = castle, fifty_copy = fifty;
+
+// restore board state
+#define take_back()                                                       \
+    memcpy(bitboards, bitboards_copy, 96);                                \
+    memcpy(occupancies, occupancies_copy, 24);                            \
+    side = side_copy;enpassant = enpassant_copy;castle = castle_copy;fifty = fifty_copy;                                                \
+
+
 #endif 
