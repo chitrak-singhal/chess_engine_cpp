@@ -2,9 +2,11 @@
 # mingw32-make             # Build without optimizations
 # mingw32-make OPT=2       # Build with -O2 optimization
 # mingw32-make OPT=3       # Build with -O3 optimization
+# mingw32-make OPT=4       # Build with -Ofast optimization
 # mingw32-make run         # Compiles and runs the program
 # mingw32-make run OPT=2   # Compiles with -O2 and runs the program
-# mingw32-make run OPT=3   # Compiles with -O2 and runs the program
+# mingw32-make run OPT=3   # Compiles with -O3 and runs the program
+# mingw32-make run OPT=4   # Compiles with -Ofast and runs the program
 # mingw32-make clean       # Remove only .o files
 # mingw32-make clean-all   # Remove .o and .exe files
 ##############################
@@ -17,6 +19,8 @@ ifeq ($(OPT),2)
     OPTIMIZE := -O2
 else ifeq ($(OPT),3)
     OPTIMIZE := -O3
+else ifeq ($(OPT),4)
+    OPTIMIZE := -Ofast
 else
     OPTIMIZE := 
 endif
