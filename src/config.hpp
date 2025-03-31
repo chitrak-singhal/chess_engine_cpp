@@ -94,6 +94,9 @@ enum {wk=1, wq=2, bk=4, bq=8};
 //encoding pieces, uppercase is white, lower case is black
 enum {P, N, B, R, Q, K, p, n, b, r, q, k}; //N is knight k is king
 
+//flags to distinguish between all moves, and capture only
+enum {all_moves, captures_only};
+ 
 //ASCII pieces
 constexpr char ascii_pieces[13] = "PNBRQKpnbrqk";
 

@@ -19,8 +19,6 @@ void print_bitboard(U64 bitboard)
     for (char file = 'a'; file<='h'; file++)
         cout<<file<<" ";
     cout<<"\n\n";
-    //print bitboard as unsigned decimal number
-    //cout<<"Bitboard: "<<bitboard<<"\n";
 }
 
 /*##########################
@@ -106,12 +104,16 @@ int main()
     cout<<"####################################\n";
     //initialise everything
     init_everything();
-    parse_FEN_string("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq a3 49 1 ");
+    parse_FEN_string("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1 ");
     print_board();
-    copy_board();
-    parse_FEN_string(empty_board);
-    print_board();
-    take_back();
-    print_board();
+    MoveList move_list;
+    generate_moves(move_list);
+    for (int move_count = 0; move_count<move_list.index; move_count++)
+    {
+        int move = move_list.moves[move_count];
+        move_list.print_move(move);
+        make_move(move, all_moves);
+    }   
+    //cout<<is_square_attacked(e1, black)<<"\n";
     return 0;
 }

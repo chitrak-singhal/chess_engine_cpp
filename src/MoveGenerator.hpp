@@ -62,12 +62,12 @@ extern char promoted_pieces[128];
 //move list
 class MoveList 
 {
+    public:
     //store the moves, 256 is sufficient to store moves of one cycle 
     int moves[256];
     //index of the list
     int index;
 
-    public:
     //constructor
     MoveList()
     {
@@ -113,11 +113,9 @@ class MoveList
         cout<<"Total number of moves: "<<index<<"\n\n";
     }
 };
-//move list object
-extern MoveList move_list;
 
 //function to generate all legal moves
-static inline void generate_moves()
+static inline void generate_moves(MoveList &move_list)
 {
     //source & target square
     int source_square, target_square;
@@ -522,5 +520,209 @@ static inline void generate_moves()
     memcpy(occupancies, occupancies_copy, 24);                            \
     side = side_copy;enpassant = enpassant_copy;castle = castle_copy;fifty = fifty_copy;                                                \
 
+//castling rights update
+/*
+                           castling   move     in      in
+                              right update     binary  decimal
+
+ king & rooks didn't move:     1111 & 1111  =  1111    15
+
+        white king  moved:     1111 & 1100  =  1100    12
+  white king's rook moved:     1111 & 1110  =  1110    14
+ white queen's rook moved:     1111 & 1101  =  1101    13
+     
+         black king moved:     1111 & 0011  =  1011    3
+  black king's rook moved:     1111 & 1011  =  1011    11
+ black queen's rook moved:     1111 & 0111  =  0111    7
+
+*/
+
+// castling rights update constants
+constexpr int castling_rights[64] = {
+    7, 15, 15, 15,  3, 15, 15, 11,
+   15, 15, 15, 15, 15, 15, 15, 15,
+   15, 15, 15, 15, 15, 15, 15, 15,
+   15, 15, 15, 15, 15, 15, 15, 15,
+   15, 15, 15, 15, 15, 15, 15, 15,
+   15, 15, 15, 15, 15, 15, 15, 15,
+   15, 15, 15, 15, 15, 15, 15, 15,
+   13, 15, 15, 15, 12, 15, 15, 14
+};
+
+//make move function
+static inline int make_move(int move, int move_flag)
+{
+    //all moves are allowed
+    if (move_flag==all_moves)
+    {
+        //preserve game state
+        copy_board();
+
+        //get info about the move
+        int source_square = decode_move_source(move);
+        int target_square = decode_move_target(move);
+        int piece = decode_move_piece(move);
+        int promoted_piece = decode_move_promo_piece(move);
+        int is_capture = decode_move_capture(move);
+        int is_double_push =decode_move_double(move);
+        int is_enpassant = decode_move_enpassant(move);
+        int is_castling = decode_move_castling(move);
+
+        //if pawn moves or captures, reset fifty move counter
+        if (is_capture||piece==P||piece==p)
+            fifty = 0;
+        
+        //move the piece
+        reset_bit(bitboards[piece], source_square);
+        set_bit(bitboards[piece], target_square);
+
+        //enpassant
+        if (is_enpassant)
+        {
+            if (side==white)
+            {
+                //captured pawn is below the target square
+                reset_bit(bitboards[p], target_square+8);
+            }
+            else
+            {
+                //captured pawn is above the target square
+                reset_bit(bitboards[P], target_square-8);
+            }
+        }
+        //reset enpassant, if double push, it will get set in next if condition
+        enpassant = no_square;
+        //double push
+        if (is_double_push)
+        {
+            //we need to set enpassant for the other side
+            if (side==white)
+            {
+                //enpassant below the target_square
+                enpassant = target_square+8;
+            }
+            else
+            {
+                //enpassant is above the target square
+                enpassant = target_square-8;
+            }
+        }
+        //promotion
+        if (promoted_piece)
+        {
+            if (side==white)
+            {
+                //erase our pawn
+                reset_bit(bitboards[P], target_square);
+            }
+            else
+            {
+                reset_bit(bitboards[p], target_square);
+            }
+            //place the promoted piece
+            set_bit(bitboards[promoted_piece], target_square);
+        }
+        //castling
+        if (is_castling)
+        {
+            //we need to move rooks, according to castle type
+            //white king side
+            if (target_square==g1)
+            {
+                reset_bit(bitboards[R], h1);
+                set_bit(bitboards[R], f1);
+            }
+            //white queen side
+            else if (target_square==c1)
+            {
+                reset_bit(bitboards[R], a1);
+                set_bit(bitboards[R], d1);
+            }
+            //black king side
+            else if (target_square==g8)
+            {
+                reset_bit(bitboards[r], h8);
+                set_bit(bitboards[r], f8);
+            }
+            //black queen side
+            else
+            {
+                reset_bit(bitboards[r], a8);
+                set_bit(bitboards[r], d8);
+            }
+        }
+        //update castling rights
+        castle &= castling_rights[source_square];
+        castle &= castling_rights[target_square];
+
+        //capture
+        if (is_capture)
+        {
+            //loop over all pieces to see which was on the target square and remove it
+            if (side==white)
+            {
+                for (int target_piece = p; target_piece<=k;target_piece++)
+                {
+                    if (get_bit(bitboards[target_piece], target_square))
+                    {
+                        reset_bit(bitboards[target_piece], target_square); 
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                for (int target_piece = P; target_piece<=K;target_piece++)
+                {
+                    if (get_bit(bitboards[target_piece], target_square))
+                    {
+                        reset_bit(bitboards[target_piece], target_square); 
+                        break;
+                    }
+                }
+            }
+        }
+        //update side to move
+        side = 1-side;
+
+        //update occupancies
+        memset(occupancies, 0ULL, 24);
+
+        for (int update_piece = P; update_piece<=K; update_piece++)
+        {
+            occupancies[white]|= bitboards[update_piece];
+        }
+        for (int update_piece = p; update_piece<=k; update_piece++)
+        {
+            occupancies[black]|= bitboards[update_piece];
+        }
+        occupancies[both] = (occupancies[white]|occupancies[black]);
+
+        //check if king is atatcked, if so it is an illegal move, take it back
+        //if after switching sides, white is to move, then we check if white is attacking blacking king
+        int king_piece = (side==white?k:K);
+        if (is_square_attacked(get_fsb(bitboards[king_piece]), side))
+        {
+            //take it back
+            take_back();
+            //cout<<"Illegal move\n"; //for testing
+            //illegal move
+            return 0;
+        }
+        // legal move
+        return 1;
+
+    }
+    //capture moves only
+    else
+    {
+        //if the move is capture make it
+        if (decode_move_capture(move))
+            return make_move(move, all_moves);
+        //otherwise skip it
+        else
+            return 0;
+    }
+}
 
 #endif 

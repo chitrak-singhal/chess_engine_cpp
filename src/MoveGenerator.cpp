@@ -9,9 +9,6 @@ Move generator
 //convert promoted piece to character
 char promoted_pieces[128];
 
-//move list object
-MoveList move_list;
-
 //print function for testing
 void print_attacked_squares(int side)
 {
