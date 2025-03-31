@@ -12,8 +12,11 @@ Including system files
 #include<string.h>
 //for unicodes
 #ifdef _WIN32 //if comipiling on windows
-    #include <windows.h>  // Windows-specific header
-#endif  // Required for SetConsoleOutputCP()
+    #include <windows.h>  // Windows-specific header Required for SetConsoleOutputCP() and time ms functions
+#else
+    #include <sys/time.h> //for other os
+#endif  
+
 
 using namespace std;
 

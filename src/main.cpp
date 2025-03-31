@@ -54,6 +54,14 @@ Move generator
 
 /*##########################
 
+UCI functions
+
+#############################*/
+
+#include "UCI.hpp"
+
+/*##########################
+
 Initialize everything
 
 #############################*/
@@ -94,7 +102,7 @@ Main driver
 int main()
 {
     ios::sync_with_stdio(false); //turn off sync with C's stdout
-    cin.tie(nullptr); //stops flushing cout buffer before every cin operation
+    //cin.tie(nullptr); //stops flushing cout buffer before every cin operation
     // Set Windows console to UTF-8 mode only if on Windows
     #ifdef _WIN32 //_WIN32 has both 32 and 64, _WIN64 has only 64
         SetConsoleOutputCP(CP_UTF8);
@@ -107,6 +115,7 @@ int main()
     parse_FEN_string("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1 ");
     print_board();
     MoveList move_list;
+    int start = get_time_ms();
     generate_moves(move_list);
     for (int move_count = 0; move_count<move_list.index; move_count++)
     {
@@ -115,5 +124,7 @@ int main()
         make_move(move, all_moves);
     }   
     //cout<<is_square_attacked(e1, black)<<"\n";
+    int end = get_time_ms();
+    cout<<"Time taken to execute:"<<(end-start)<<"ms\n";
     return 0;
 }
