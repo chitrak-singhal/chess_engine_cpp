@@ -87,7 +87,11 @@ class MoveList
     void print_move(int move)
     {
         //if no prmotion (0 value) promoted_pieces gives null char, so nothing printed
-        cout<<square_to_board[decode_move_source(move)]<<square_to_board[decode_move_target(move)]<<promoted_pieces[decode_move_promo_piece(move)]<<"\n";
+        //but this might not work everytime, so to be safe, let's add if else
+        if (promoted_pieces[decode_move_promo_piece(move)])
+            cout<<square_to_board[decode_move_source(move)]<<square_to_board[decode_move_target(move)]<<promoted_pieces[decode_move_promo_piece(move)]<<"\n";
+        else
+            cout<<square_to_board[decode_move_source(move)]<<square_to_board[decode_move_target(move)]<<"\n";
     }
 
     //print move list

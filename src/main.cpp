@@ -42,7 +42,7 @@ Magic number generator
 
 #############################*/
 
-#include "MagicGenerator.hpp" 
+//#include "MagicGenerator.hpp" 
 
 /*##########################
 
