@@ -88,7 +88,7 @@ void print_board()
 }
 
 //parse FEN function
-void parse_FEN_string(const char * fen)
+void parse_FEN_string(const string &fen)
 {
     //reset board, occupancies and state variables
     memset(bitboards, 0ULL, sizeof(bitboards));

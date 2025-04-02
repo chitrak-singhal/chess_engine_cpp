@@ -19,7 +19,7 @@ int get_time_ms()
 }
 
 //parse user or GUI move string for UCI purpose (a2a3, a7a8q)
-int parse_move_string(char *move_string)
+int parse_move_string(const string& move_string)
 {
     //we need to check if move provided by the user/GUI is legal
     //so create a move list and check if that move is present in it

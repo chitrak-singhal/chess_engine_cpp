@@ -52,6 +52,6 @@ void print_board();
 #define repetitions "2r3k1/R7/8/1R6/8/8/P4KPP/8 w - - 0 40 "
 
 //parse FEN function
-void parse_FEN_string(const char * fen);
+void parse_FEN_string(const string &fen);
 
 #endif

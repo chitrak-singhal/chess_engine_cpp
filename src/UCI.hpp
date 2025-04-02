@@ -12,5 +12,5 @@ UCI functions
 int get_time_ms();
 
 //parse move string for UCI purpose (a2a3, a7a8q)
-int parse_move_string(char *move_string);
+int parse_move_string(const string &move_string);
 #endif
