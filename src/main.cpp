@@ -119,8 +119,16 @@ int main()
     cout<<"####################################\n";
     //initialise everything
     init_everything();
-    parse_FEN_string(start_position);
+    parse_FEN_string("r3k2r/p11pqpb1/bn2pnp1/2pPN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq c6 0 1 ");
     print_board();
-    perft_test(6);
+    char move_string[] ="d5c6";
+    int move = parse_move_string(move_string);
+    if (!move) cout<<"Illegal move\n";
+    if (promoted_pieces[decode_move_promo_piece(move)])
+        cout<<square_to_board[decode_move_source(move)]<<square_to_board[decode_move_target(move)]<<promoted_pieces[decode_move_promo_piece(move)]<<"\n";
+    else
+        cout<<square_to_board[decode_move_source(move)]<<square_to_board[decode_move_target(move)]<<"\n";
+    if (move) {make_move(move, all_moves);
+    print_board();}
     return 0;
 }
