@@ -114,16 +114,16 @@ int main()
     #ifdef _WIN32 //_WIN32 has both 32 and 64, _WIN64 has only 64
         SetConsoleOutputCP(CP_UTF8);
     #endif
-    cout<<"####################################\n";
-    cout<<"Welcome to Domino, never lose again!\n";
-    cout<<"####################################\n";
+
+    // cout<<"####################################\n";
+    // cout<<"Welcome to Domino, never lose again!\n";
+    // cout<<"####################################\n";
+
     //initialise everything
     init_everything();
-    
-    //parse position testing
-    parse_position("position startpos moves e2e4 e7e5 g1f3");
 
-    print_board();
+    //connect to the GUI
+    uci_loop();
 
     return 0;
 }

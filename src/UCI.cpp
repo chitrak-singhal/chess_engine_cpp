@@ -130,4 +130,103 @@ void parse_position(const string &command)
             make_move(move, all_moves);
         }
     }
+    //debugging purpose
+    print_board();
+}
+
+//parse "go" commaand for UCI
+void parse_go(const string &command)
+{
+    //go to first word after go
+    int ind = 3;
+    
+    //depth of search
+    int depth = -1;
+    //if depth word present
+    if (command.compare(ind, 5, "depth")==0)
+    {
+        //skip to number
+        ind+= 6;
+
+        //covert depth to integer
+        depth = 0;
+        while(command[ind]<='9'&&command[ind]>='0')
+        {
+            depth = depth*10 + (command[ind] - '0');
+            ind++;
+        }
+        //next word or end
+        ind++;
+    }
+    //different time controls placeholder
+    else 
+        depth = 6;
+
+    //search position
+    //search_position(depth);
+    //cout<<"depth: "<<depth<<"\n";
+}
+
+//main UCI loop to connect with GUI
+void uci_loop()
+{
+    //some commands for debugging
+    cout << "\nCommands for debugging:\n";
+    cout << "'d' - print current board position\n";
+
+    //run loop unless broken
+    while(true)
+    {
+        //user input
+        string input;
+
+        //flush output since i am using "\n" everywhere
+        cout.flush();
+
+        //take user input
+        getline(cin, input);
+
+        //check if input is there or not
+        if (input.empty())
+            continue;
+        
+        //parse debug "d" command
+        if (input=="d")
+            print_board();
+        //GUI say isready, engine should say readyok
+        else if (input.substr(0, 7)=="isready")
+        {
+            cout<<"readyok\n"; continue;
+        }
+        //parse position command
+        else if (input.substr(0, 8)=="position")
+        {
+            parse_position(input);
+        }
+        //parse UCI ucinewgame command
+        else if (input.substr(0, 10)=="ucinewgame")
+        {
+            //send command for starting position
+            parse_position("position startpos");
+        }
+        //parse "uci" command, first check for ucinewgames, otherqise ucinewgames triggers this
+        else if (input.substr(0, 3) == "uci")
+        {
+            // print engine info
+            cout << "id name Domino"<< "\n";
+            cout << "id author Chitrak Singhal\n";
+            cout << "uciok\n";
+        }
+        //parse go command
+        else if (input.substr(0,2)=="go")
+        {
+            parse_go(input);
+        }
+        //parse quit command
+        else if (input.substr(0,4)=="quit")
+        {
+            //exit
+            break;
+        }
+    }
 }
