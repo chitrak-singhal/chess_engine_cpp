@@ -6,6 +6,7 @@ UCI functions
 #include "config.hpp"
 #include "MoveGenerator.hpp"
 #include "Board.hpp"
+#include "Search.hpp"
 
 //get time in milisecs
 int get_time_ms()
@@ -163,7 +164,8 @@ void parse_go(const string &command)
         depth = 6;
 
     //search position
-    //search_position(depth);
+    search_position(depth);
+
     //cout<<"depth: "<<depth<<"\n";
 }
 
