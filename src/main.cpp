@@ -21,59 +21,29 @@ void print_bitboard(U64 bitboard)
     cout<<"\n\n";
 }
 
-/*##########################
-
-Precalculated Attack Tables (PAT)
-
-#############################*/
+//Precalculated Attack Tables (PAT)
 #include "PAT.hpp"
 
-/*##########################
-
-Define the board
-
-#############################*/
-
+//Define the board
 #include "Board.hpp"
 
-/*##########################
-
-Magic number generator
-
-#############################*/
-
+//Magic number generator
 //#include "MagicGenerator.hpp" 
 
-/*##########################
-
-Move generator
-
-#############################*/
-
+//Move generator
 #include "MoveGenerator.hpp"
 
-/*##########################
-
-Perft test
-
-#############################*/
+//Perft test
 #include "Perft.hpp"
 
-/*##########################
-
-UCI functions
-
-#############################*/
-
+//UCI functions
 #include "UCI.hpp"
 
-/*##########################
-
-Search
-
-#############################*/
-
+//Search
 #include "Search.hpp"
+
+//Evaluate
+#include "Evaluate.hpp"
 
 /*##########################
 
@@ -123,15 +93,24 @@ int main()
         SetConsoleOutputCP(CP_UTF8);
     #endif
 
-    // cout<<"####################################\n";
-    // cout<<"Welcome to Domino, never lose again!\n";
-    // cout<<"####################################\n";
+    cout<<"####################################\n";
+    cout<<"Welcome to Domino, never lose again!\n";
+    cout<<"####################################\n";
 
     //initialise everything
     init_everything();
 
-    //connect to the GUI
-    uci_loop();
+    bool debug  = true;
+    if (debug) 
+    {
+        //testing evaluate
+        parse_FEN_string("rnbqkbnr/pppp1ppp/8/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 0 1 ");
+        print_board();
+        cout<<evaluate()<<"\n";
+    }
+    else
+        //connect to the GUI
+        uci_loop();
 
     return 0;
 }
