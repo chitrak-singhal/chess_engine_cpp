@@ -35,6 +35,9 @@ extern int castle;
 //fifty move rule counter
 extern int fifty;
 
+//half move counter for search, starts from 0 for each search
+extern int ply;
+
 //we need to convert chars 'P' to constant P , to be used by enum to convert to number index
 // 'P' will become index 80 in this int array, and will store 80 value
 // [index] allows us to place at a particular index

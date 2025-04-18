@@ -59,6 +59,18 @@ void print_attacked_squares(int side);
 //convert promoted piece to character
 extern char promoted_pieces[128];
 
+//print move function according to UCI protocol format (moved outside move_list class since needed it apart from that too)
+static inline void print_move(int move)
+{
+    //if no prmotion (0 value) promoted_pieces gives null char, so nothing printed
+    //but this might not work everytime, so to be safe, let's add if else
+    if (promoted_pieces[decode_move_promo_piece(move)])
+        //removed new lines for uci reasons
+        cout<<square_to_board[decode_move_source(move)]<<square_to_board[decode_move_target(move)]<<promoted_pieces[decode_move_promo_piece(move)];
+    else
+        cout<<square_to_board[decode_move_source(move)]<<square_to_board[decode_move_target(move)];
+}
+
 //move list
 class MoveList 
 {
@@ -81,17 +93,6 @@ class MoveList
         moves[index] = move;
         //increment index
         index++;
-    }
-
-    //print move function according to UCI protocol format
-    void print_move(int move)
-    {
-        //if no prmotion (0 value) promoted_pieces gives null char, so nothing printed
-        //but this might not work everytime, so to be safe, let's add if else
-        if (promoted_pieces[decode_move_promo_piece(move)])
-            cout<<square_to_board[decode_move_source(move)]<<square_to_board[decode_move_target(move)]<<promoted_pieces[decode_move_promo_piece(move)]<<"\n";
-        else
-            cout<<square_to_board[decode_move_source(move)]<<square_to_board[decode_move_target(move)]<<"\n";
     }
 
     //print move list
